@@ -4,7 +4,7 @@
 #
 # 首次使用前，请先在 GitHub 上创建仓库：
 #   1. 打开 https://github.com/new
-#   2. Repository name 填: nachuan-skills
+#   2. Repository name 填: nachuan-stu
 #   3. 选 Public（公开）
 #   4. 不要勾选 "Initialize this repository with a README"
 #   5. 点 Create repository
@@ -41,26 +41,26 @@ if git remote get-url origin > /dev/null 2>&1; then
     echo "   远程仓库: $(git remote get-url origin)"
 else
     echo "   未设置远程仓库，正在添加..."
-    git remote add origin https://github.com/wilsondd-lab/nachuan-skills.git
+    git remote add origin https://github.com/wilsondd-lab/nachuan-stu.git
 fi
 
 # 推送
 if git push -u origin main 2>&1; then
     echo ""
     echo "✅ 推送成功！"
-    echo "📦 你的仓库地址: https://github.com/wilsondd-lab/nachuan-skills"
+    echo "📦 你的仓库地址: https://github.com/wilsondd-lab/nachuan-stu"
     echo ""
     echo "安装方法："
-    echo "  npx skills add wilsondd-lab/nachuan-skills -s nachuan-tujie"
-    echo "  npx skills add wilsondd-lab/nachuan-skills -s nachuan-teachingvideo"
+    echo "  npx skills add wilsondd-lab/nachuan-stu -s nachuan-tujie"
+    echo "  npx skills add wilsondd-lab/nachuan-stu -s nachuan-teachingvideo"
 else
     echo ""
     echo "❌ 推送失败"
     echo ""
     echo "可能的原因："
-    echo "  1. GitHub 上还没有创建 nachuan-skills 仓库"
+    echo "  1. GitHub 上还没有创建 nachuan-stu 仓库"
     echo "     → 去这里创建：https://github.com/new"
-    echo "     → Repository name 填: nachuan-skills"
+    echo "     → Repository name 填: nachuan-stu"
     echo "     → 选 Public"
     echo "     → 不要勾选 Initialize with README"
     echo ""

@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 纳川 Skill 自动更新脚本
-从 linyuebanzi-skills 上游获取最新更新，按纳川规范改造后更新到 nachuan-skills。
+从 linyuebanzi-skills 上游获取最新更新，按纳川规范改造后更新到 nachuan-stu。
 
 更新流程：
 1. 拉取上游 linyuebanzi-skills 最新代码
 2. 对比差异，识别有变更的文件
 3. 应用纳川改造规则（名字替换、免token配置、OpenMontage融合、橙皮书定位）
-4. 生成更新后的 nachuan-skills
+4. 生成更新后的 nachuan-stu
 5. 提交并推送到 GitHub
 
 用法：

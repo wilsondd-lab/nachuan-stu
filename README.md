@@ -74,11 +74,11 @@
 
 ```bash
 # 使用 skills CLI 安装
-npx skills add <your-github-username>/nachuan-skills -s nachuan-tujie
-npx skills add <your-github-username>/nachuan-skills -s nachuan-teachingvideo
+npx skills add wilsondd-lab/nachuan-stu -s nachuan-tujie
+npx skills add wilsondd-lab/nachuan-stu -s nachuan-teachingvideo
 
 # 或直接克隆
-git clone https://github.com/<your-github-username>/nachuan-skills.git
+git clone https://github.com/wilsondd-lab/nachuan-stu.git
 ```
 
 ### 零配置开箱即用，不需要任何 API Key 即可使用基础功能。
@@ -118,7 +118,7 @@ python3 update_scripts/sync_upstream.py
 
 ## 与上游区别
 
-| 维度 | 上游 linyuebanzi-skills | 纳川 nachuan-skills |
+| 维度 | 上游 linyuebanzi-skills | 纳川 nachuan-stu |
 |------|----------------------|-------------------|
 | 目标用户 | 通用 | 准高中生 + 家长 |
 | 生图配置 | 需要 API Key | 默认内置，零配置 |
