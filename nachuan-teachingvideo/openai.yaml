@@ -1,0 +1,4 @@
+interface:
+  display_name: "纳川教学视频"
+  short_description: "概念 → 配音教学视频 + 无声循环动图（macOS say 默认 + Minimax 可选 + HyperFrames 本地渲染）"
+  default_prompt: "给我一个概念（如'光现象'/'杠杆原理'），自动生成带中文配音的教学视频和无声循环动图，配色按主题适配。零配置即用，适合准高中生学习"
