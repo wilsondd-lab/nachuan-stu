@@ -2,7 +2,22 @@
 
 > 纳川教学视频的动效不只是好看，更是为了辅助理解。
 > 来源：Disney 12 动画原则 (Frank Thomas & Ollie Johnston)、School of Motion 课程、
-> Motion Design School、HyperFrames 文档、The Animator's Survival Kit (Richard Williams)
+> Motion Design School、HyperFrames 文档、The Animator's Survival Kit (Richard Williams)、
+> OpenMontage 动效编排方法论
+
+---
+
+## 与八阶段管线的对应关系
+
+| 本文章节 | 对应管线阶段 | 作用 |
+|---|---|---|
+| 四大核心时序原则 | 阶段 5 场景编排 | GSAP 动效的底层规则 |
+| 缓动曲线参考表 | 阶段 5 场景编排 | 具体 ease 选择指南 |
+| 停留帧规范 | 阶段 3 分镜设计 + 阶段 5 编排 | 认知呼吸时间的把控 |
+| 转场类型指南 | 阶段 3 分镜设计 + 阶段 6 渲染 | 有限转场家族原则 |
+| 动效编排节奏 | 阶段 5 场景编排 | 每场景的标准时序 |
+| SVG 描边动画规范 | 阶段 5 场景编排 | 示意图绘制动画的规范 |
+| 常见动效错误 | 阶段 5 + G5 质量门 | 自检避坑清单 |
 
 ---
 
