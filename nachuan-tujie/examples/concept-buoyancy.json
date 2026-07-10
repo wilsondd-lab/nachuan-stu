@@ -1,0 +1,48 @@
+{
+  "subject": "物理",
+  "grade": "初二",
+  "title": "什么是浮力",
+  "subtitle": "液体和气体对浸在其中的物体的作用力",
+  "hero_icon": "🌊",
+  "definition": "<strong>浮力</strong>是液体或气体对浸在其中的物体产生的<strong>竖直向上</strong>的力。一切浸在液体或气体里的物体都受到浮力。",
+  "cards": [
+    {
+      "number": "01",
+      "icon": "⬆️",
+      "title": "方向",
+      "description": "浮力的方向总是竖直向上的，与重力方向相反。",
+      "keywords": {
+        "keyword_list": ["竖直向上", "与重力相反"]
+      }
+    },
+    {
+      "number": "02",
+      "icon": "⚖️",
+      "title": "产生原因",
+      "description": "物体上下表面存在压力差，向上的压力大于向下的压力。",
+      "keywords": {
+        "keyword_list": ["压力差", "F向上 > F向下"]
+      }
+    },
+    {
+      "number": "03",
+      "icon": "📏",
+      "title": "阿基米德原理",
+      "description": "浮力的大小等于物体排开液体所受的重力，即 F浮 = ρ液gV排。",
+      "keywords": {
+        "keyword_list": ["F浮=ρ液gV排", "排开液体"]
+      }
+    },
+    {
+      "number": "04",
+      "icon": "🎯",
+      "title": "浮沉条件",
+      "description": "浮力大于重力则上浮，等于则悬浮，小于则下沉。",
+      "keywords": {
+        "keyword_list": ["上浮", "悬浮", "下沉"]
+      }
+    }
+  ],
+  "tip": "浮力的施力物体是液体或气体，受力物体是浸在其中的物体。浮力方向永远竖直向上，不是垂直向上。",
+  "palette": "terracotta"
+}

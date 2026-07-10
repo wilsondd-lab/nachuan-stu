@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, initial-scale=1.0">
+<title>速度 vs 加速度 · 纳川图解</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+  /* ============================================================
+     纳川图解 · 标准9:16竖版模板
+     画布尺寸：1080 x 1920
+     配色方案：莫兰迪蓝（可替换为其他5套色系，见 design_system.md）
+     ============================================================ */
+
+  /* ---- CSS 变量：莫兰迪蓝色系 ---- */
+  :root {
+    /* 主色：莫兰迪蓝 */
+    --color-primary: #6B8E9F;
+    --color-primary-light: #A8C0CC;
+    --color-primary-dark: #4A6B7A;
+    --color-primary-bg: #E8F0F3;
+
+    /* 辅色：莫兰迪橙（强调用） */
+    --color-accent: #C4A484;
+    --color-accent-light: #E0C9A6;
+    --color-accent-bg: #F5EDE0;
+
+    /* 警告色（易错点用） */
+    --color-warning: #B87C7C;
+    --color-warning-bg: #F0E0E0;
+
+    /* 成功色（正确/总结用） */
+    --color-success: #7C9B7C;
+    --color-success-bg: #E0EDE0;
+
+    /* 中性色 */
+    --color-text: #2D3436;
+    --color-text-secondary: #636E72;
+    --color-text-light: #95A5A6;
+    --color-bg: #F8F9FA;
+    --color-card: #FFFFFF;
+    --color-border: #DFE6E9;
+
+    /* 字体 */
+    --font-title: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    --font-body: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    --font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+
+    /* 间距（8px基准） */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+
+    /* 圆角 */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    /* 阴影 */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+  }
+
+  /* ---- 全局重置 ---- */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    position: relative;
+  }
+
+  /* ============================================================
+     画布容器
+     ============================================================ */
+  .canvas {
+    width: 1080px;
+    height: 1920px;
+    background: linear-gradient(180deg, var(--color-primary-bg) 0%, var(--color-bg) 25%, var(--color-bg) 100%);
+    position: relative;
+    padding: 60px 56px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============================================================
+     标题区（顶部，约占 15%）
+     ============================================================ */
+  .header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* 学科徽章 */
+  .subject-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-primary);
+    color: white;
+    padding: 8px 24px;
+    border-radius: 100px;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    margin-bottom: var(--space-md);
+  }
+
+  .subject-badge svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* 主标题 */
+  .main-title {
+    font-family: var(--font-title);
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    margin-bottom: var(--space-sm);
+    letter-spacing: 2px;
+  }
+
+  .main-title .highlight {
+    color: var(--color-primary);
+    position: relative;
+  }
+
+  .main-title .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background: var(--color-accent-light);
+    opacity: 0.6;
+    z-index: -1;
+    border-radius: 6px;
+  }
+
+  /* 副标题 */
+  .subtitle {
+    font-size: 28px;
+    color: var(--color-text-secondary);
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  /* ============================================================
+     概念卡片区（上中部，约占 25%）
+     ============================================================ */
+  .concept-section {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--space-md);
+  }
+
+  .section-label .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+
+  .section-label .text {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: 1px;
+  }
+
+  .section-label .divider {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-border), transparent);
+    margin-left: 12px;
+  }
+
+  .concept-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .concept-card {
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 24px 28px;
+    box-shadow: var(--shadow-sm);
+    border-left: 6px solid var(--color-primary);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .concept-card:nth-child(2) {
+    border-left-color: var(--color-accent);
+  }
+
+  .concept-card:nth-child(3) {
+    border-left-color: var(--color-success);
+  }
+
+  .concept-card .icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--color-primary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .concept-card:nth-child(2) .icon-box {
+    background: var(--color-accent-bg);
+  }
+
+  .concept-card:nth-child(3) .icon-box {
+    background: var(--color-success-bg);
+  }
+
+  .concept-card .icon-box svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .concept-card .content {
+    flex: 1;
+  }
+
+  .concept-card .title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+  }
+
+  .concept-card .desc {
+    font-size: 22px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     公式区（中部，约占 20%）
+     ============================================================ */
+  .formula-section {
+    margin-bottom: var(--space-lg);
+  }
+
+  .formula-card {
+    background: linear-gradient(135deg, var(--color-card) 0%, var(--color-primary-bg) 100%);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--color-primary-light);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .formula-card::before {
+    content: '公式';
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    font-size: 18px;
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
+    padding: 4px 16px;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+
+  .formula-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 16px;
+  }
+
+  .formula-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .formula-box {
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 16px 28px;
+    box-shadow: var(--shadow-sm);
+    flex: 1;
+    text-align: center;
+  }
+
+  .formula-name {
+    font-size: 22px;
+    color: var(--color-primary-dark);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .formula-expression {
+    font-family: var(--font-mono);
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: 2px;
+  }
+
+  .formula-expression .var {
+    color: var(--color-primary-dark);
+    font-style: italic;
+  }
+
+  .formula-expression .num {
+    color: var(--color-accent);
+  }
+
+  .formula-units {
+    font-size: 20px;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+  }
+
+  /* 公式之间的箭头 */
+  .formula-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-text-light);
+    font-size: 18px;
+  }
+
+  .formula-arrow svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* 速度-加速度关系示意 */
+  .relation-svg {
+    width: 100%;
+    height: 120px;
+    margin-top: 16px;
+  }
+
+  /* ============================================================
+     易错点区（下部，约占 20%）
+     ============================================================ */
+  .mistake-section {
+    margin-bottom: var(--space-lg);
+  }
+
+  .mistake-section .section-label .dot {
+    background: var(--color-warning);
+  }
+
+  .mistake-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .mistake-card {
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--color-warning-bg);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .mistake-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-warning-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mistake-icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--color-warning);
+  }
+
+  .mistake-content {
+    flex: 1;
+  }
+
+  .mistake-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-warning);
+    margin-bottom: 4px;
+  }
+
+  .mistake-desc {
+    font-size: 21px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .mistake-correct {
+    font-size: 20px;
+    color: var(--color-success);
+    margin-top: 6px;
+    padding-left: 8px;
+    border-left: 3px solid var(--color-success);
+  }
+
+  /* ============================================================
+     总结区（底部，约占 20%）
+     ============================================================ */
+  .summary-section {
+    margin-top: auto;
+  }
+
+  .summary-card {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    box-shadow: var(--shadow-lg);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .summary-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .summary-label {
+    font-size: 22px;
+    letter-spacing: 4px;
+    opacity: 0.8;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .summary-text {
+    font-size: 30px;
+    line-height: 1.7;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+
+  .summary-text .keyword {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .summary-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    z-index: 1;
+  }
+
+  .summary-brand {
+    font-size: 20px;
+    opacity: 0.7;
+    letter-spacing: 2px;
+  }
+
+  .summary-grade {
+    font-size: 20px;
+    opacity: 0.7;
+  }
+
+  /* ============================================================
+     SVG 图示区（概念可视化）
+     ============================================================ */
+  .visual-section {
+    margin-bottom: var(--space-lg);
+    display: flex;
+    gap: 20px;
+  }
+
+  .visual-box {
+    flex: 1;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+  }
+
+  .visual-box-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 12px;
+  }
+
+  .visual-box svg {
+    width: 100%;
+    height: 160px;
+  }
+
+  .visual-box:nth-child(2) .visual-box-title {
+    color: var(--color-accent);
+  }
+
+</style>
+</head>
+<body>
+
+<div class="canvas">
+
+  <!-- ============================================================
+       标题区
+       ============================================================ -->
+  <div class="header">
+    <div class="subject-badge">
+      <!-- 物理图标 -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      物 理
+    </div>
+    <h1 class="main-title">
+      <span class="highlight">速度</span> vs <span class="highlight">加速度</span>
+    </h1>
+    <p class="subtitle">运动学基础 · 两个最容易搞混的物理量</p>
+  </div>
+
+  <!-- ============================================================
+       概念卡片区（3个核心概念）
+       ============================================================ -->
+  <div class="concept-section">
+    <div class="section-label">
+      <span class="dot"></span>
+      <span class="text">核心概念</span>
+      <span class="divider"></span>
+    </div>
+
+    <div class="concept-cards">
+      <!-- 概念卡片1：速度 -->
+      <div class="concept-card">
+        <div class="icon-box">
+          <!-- 速度图标：箭头 -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4A6B7A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="m12 5 7 7-7 7"/>
+          </svg>
+        </div>
+        <div class="content">
+          <div class="title">速度 v</div>
+          <div class="desc">描述物体运动<strong>快慢</strong>的物理量。单位时间内通过的位移。</div>
+        </div>
+      </div>
+
+      <!-- 概念卡片2：加速度 -->
+      <div class="concept-card">
+        <div class="icon-box">
+          <!-- 加速度图标：双箭头（变化率） -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C4A484" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 5l7 7-7 7"/>
+            <path d="M6 5l7 7-7 7"/>
+          </svg>
+        </div>
+        <div class="content">
+          <div class="title">加速度 a</div>
+          <div class="desc">描述速度<strong>变化快慢</strong>的物理量。单位时间内速度的变化量。</div>
+        </div>
+      </div>
+
+      <!-- 概念卡片3：关系 -->
+      <div class="concept-card">
+        <div class="icon-box">
+          <!-- 关系图标：循环 -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7C9B7C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+            <path d="M21 3v5h-5"/>
+          </svg>
+        </div>
+        <div class="content">
+          <div class="title">理解关键</div>
+          <div class="desc">速度是"跑多快"，加速度是"速度变得多快"。<strong>速度大，加速度不一定大。</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       视觉对比区（SVG示意图）
+       ============================================================ -->
+  <div class="visual-section">
+    <div class="visual-box">
+      <div class="visual-box-title">匀速运动（a=0）</div>
+      <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- 地面线 -->
+        <line x1="20" y1="130" x2="380" y2="130" stroke="#95A5A6" stroke-width="2" stroke-dasharray="8,4"/>
+        <!-- 小车 -->
+        <g transform="translate(100, 90)">
+          <rect x="0" y="10" width="80" height="30" rx="6" fill="#6B8E9F"/>
+          <rect x="20" y="-5" width="40" height="20" rx="4" fill="#4A6B7A"/>
+          <circle cx="18" cy="42" r="8" fill="#2D3436"/>
+          <circle cx="62" cy="42" r="8" fill="#2D3436"/>
+        </g>
+        <!-- 速度箭头 -->
+        <defs>
+          <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 z" fill="#6B8E9F"/>
+          </marker>
+        </defs>
+        <line x1="200" y1="110" x2="340" y2="110" stroke="#6B8E9F" stroke-width="4" marker-end="url(#arrowBlue)"/>
+        <text x="270" y="95" text-anchor="middle" font-size="18" fill="#4A6B7A" font-weight="bold">v = 恒定</text>
+      </svg>
+    </div>
+
+    <div class="visual-box">
+      <div class="visual-box-title">加速运动（a>0）</div>
+      <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- 地面线 -->
+        <line x1="20" y1="130" x2="380" y2="130" stroke="#95A5A6" stroke-width="2" stroke-dasharray="8,4"/>
+        <!-- 小车 -->
+        <g transform="translate(100, 90)">
+          <rect x="0" y="10" width="80" height="30" rx="6" fill="#C4A484"/>
+          <rect x="20" y="-5" width="40" height="20" rx="4" fill="#A08060"/>
+          <circle cx="18" cy="42" r="8" fill="#2D3436"/>
+          <circle cx="62" cy="42" r="8" fill="#2D3436"/>
+        </g>
+        <!-- 速度箭头（长） -->
+        <defs>
+          <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 z" fill="#C4A484"/>
+          </marker>
+          <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 z" fill="#B87C7C"/>
+          </marker>
+        </defs>
+        <line x1="200" y1="110" x2="360" y2="110" stroke="#C4A484" stroke-width="4" marker-end="url(#arrowOrange)"/>
+        <text x="280" y="95" text-anchor="middle" font-size="18" fill="#C4A484" font-weight="bold">v 在增大</text>
+        <!-- 加速度箭头 -->
+        <line x1="200" y1="60" x2="290" y2="60" stroke="#B87C7C" stroke-width="3" stroke-dasharray="6,3" marker-end="url(#arrowRed)"/>
+        <text x="245" y="50" text-anchor="middle" font-size="16" fill="#B87C7C" font-weight="bold">a</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       公式区
+       ============================================================ -->
+  <div class="formula-section">
+    <div class="section-label">
+      <span class="dot" style="background: var(--color-accent);"></span>
+      <span class="text">核心公式</span>
+      <span class="divider"></span>
+    </div>
+
+    <div class="formula-card">
+      <div class="formula-row">
+        <div class="formula-box">
+          <div class="formula-name">速度公式</div>
+          <div class="formula-expression">
+            <span class="var">v</span> = <span class="var">s</span> / <span class="var">t</span>
+          </div>
+          <div class="formula-units">单位：m/s （米每秒）</div>
+        </div>
+
+        <div class="formula-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#95A5A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="m12 5 7 7-7 7"/>
+          </svg>
+          <span>变化率</span>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-name">加速度公式</div>
+          <div class="formula-expression">
+            <span class="var">a</span> = <span class="var">Δv</span> / <span class="var">t</span>
+          </div>
+          <div class="formula-units">单位：m/s² （米每二次方秒）</div>
+        </div>
+      </div>
+
+      <!-- 速度与加速度关系图 -->
+      <svg class="relation-svg" viewBox="0 0 960 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- 背景网格 -->
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#DFE6E9" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="960" height="120" fill="url(#grid)" opacity="0.5" rx="8"/>
+
+        <!-- 坐标轴 -->
+        <line x1="60" y1="100" x2="920" y2="100" stroke="#636E72" stroke-width="2"/>
+        <line x1="60" y1="100" x2="60" y2="20" stroke="#636E72" stroke-width="2"/>
+
+        <!-- 轴标签 -->
+        <text x="930" y="105" font-size="14" fill="#636E72">t (s)</text>
+        <text x="50" y="18" font-size="14" fill="#636E72">v</text>
+
+        <!-- 速度曲线（匀加速） -->
+        <defs>
+          <marker id="graphArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#6B8E9F"/>
+          </marker>
+        </defs>
+        <line x1="120" y1="90" x2="820" y2="30" stroke="#6B8E9F" stroke-width="3" marker-end="url(#graphArrow)"/>
+
+        <!-- 标注：斜率 = 加速度 -->
+        <g transform="translate(500, 50)">
+          <rect x="-80" y="-22" width="160" height="28" rx="14" fill="#C4A484" opacity="0.9"/>
+          <text x="0" y="-3" text-anchor="middle" font-size="16" fill="white" font-weight="500">斜率 = 加速度 a</text>
+        </g>
+
+        <!-- Δv 标注 -->
+        <line x1="820" y1="90" x2="820" y2="30" stroke="#B87C7C" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="840" y="62" font-size="14" fill="#B87C7C" font-weight="500">Δv</text>
+
+        <!-- Δt 标注 -->
+        <line x1="120" y1="100" x2="820" y2="100" stroke="#7C9B7C" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="470" y="116" text-anchor="middle" font-size="14" fill="#7C9B7C" font-weight="500">Δt</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       易错点区
+       ============================================================ -->
+  <div class="mistake-section">
+    <div class="section-label">
+      <span class="dot"></span>
+      <span class="text">易错点提醒</span>
+      <span class="divider"></span>
+    </div>
+
+    <div class="mistake-cards">
+      <!-- 易错点1 -->
+      <div class="mistake-card">
+        <div class="mistake-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="mistake-content">
+          <div class="mistake-title">易错点1：速度为零 = 加速度为零？</div>
+          <div class="mistake-desc">错！竖直上抛到最高点时，速度为零，但加速度仍是 g = 9.8 m/s²。</div>
+          <div class="mistake-correct">加速度只和速度的"变化量"有关，和速度本身大小无关。</div>
+        </div>
+      </div>
+
+      <!-- 易错点2 -->
+      <div class="mistake-card">
+        <div class="mistake-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="mistake-content">
+          <div class="mistake-title">易错点2：速度大 = 加速度大？</div>
+          <div class="mistake-desc">错！高速匀速飞行的飞机速度很大，但加速度为零（速度不变）。</div>
+          <div class="mistake-correct">加速度描述速度变化的快慢，不描述速度本身的大小。</div>
+        </div>
+      </div>
+
+      <!-- 易错点3 -->
+      <div class="mistake-card">
+        <div class="mistake-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="mistake-content">
+          <div class="mistake-title">易错点3：加速度方向与速度方向相同？</div>
+          <div class="mistake-desc">不一定！减速运动时，加速度方向与速度方向相反（a 为负值）。</div>
+          <div class="mistake-correct">a 与 v 同向 → 加速；a 与 v 反向 → 减速。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       总结区
+       ============================================================ -->
+  <div class="summary-section">
+    <div class="summary-card">
+      <div class="summary-label">一 句 话 记 住</div>
+      <div class="summary-text">
+        速度说的是<span class="keyword">跑多快</span>，<br/>
+        加速度说的是<span class="keyword">速度变得多快</span>；<br/>
+        二者方向相同就<span class="keyword">加速</span>，<br/>
+        方向相反就<span class="keyword">减速</span>。
+      </div>
+      <div class="summary-meta">
+        <span class="summary-brand">纳川图解 · nachuan-tujie</span>
+        <span class="summary-grade">初中物理 · 八年级</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 纳川图解静态模板 - 简单入场动画
+  // 用于 HyperFrames 渲染：1.5秒入场动画后停住，取最后一帧即为最终PNG
+  (function() {
+    // 检查是否有GSAP（如果在HyperFrames环境中会被注入或已加载）
+    function hasGSAP() { return typeof gsap !== 'undefined'; }
+    
+    // 如果没有GSAP，什么都不做（纯静态也能看）
+    if (!hasGSAP()) return;
+    
+    const tl = gsap.timeline({ paused: true });
+    
+    // 简单入场：标题 → 卡片 → 公式 → 易错 → 总结
+    tl.from(".infographic-header", { y: 40, opacity: 0, duration: 0.5, ease: "power2.out" })
+      .from(".concept-cards .card", { y: 30, opacity: 0, duration: 0.4, stagger: 0.15 }, "-=0.2")
+      .from(".formula-section", { scale: 0.9, opacity: 0, duration: 0.4 }, "-=0.2")
+      .from(".common-mistake", { x: -20, opacity: 0, duration: 0.4 }, "-=0.2")
+      .from(".summary-section", { y: 20, opacity: 0, duration: 0.4 }, "-=0.2");
+    
+    // 注册到HyperFrames
+    if (typeof window !== 'undefined') {
+      window.__timelines = { main: tl };
+    }
+  })();
+</script>
+
+</body>
+</html>

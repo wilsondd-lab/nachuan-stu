@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>纳川图解 · 概念卡模板</title>
+<style>
+  /* ============================================================
+     纳川图解 · 概念卡模板
+     适合：单个概念讲解（如什么是集合、什么是浮力、什么是光合作用）
+     结构：标题区 + 3-5张要点卡片 + 底部提示
+     固定尺寸：1080 x 1920 (9:16 竖版)
+     ============================================================ */
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #C97E4E;
+    --accent-light: #E8C9B0;
+    --accent-dark: #A66238;
+    --bg: #F7F1E6;
+    --bg-card: #FFFDF8;
+    --text-primary: #3A3530;
+    --text-secondary: #6B645C;
+    --text-tertiary: #9A9186;
+    --divider: #D9CFC0;
+    --shadow: 0 4px 20px rgba(58, 53, 48, 0.08);
+    --shadow-lg: 0 8px 32px rgba(58, 53, 48, 0.12);
+  }
+
+  /* 配色方案 · 通过 body class 切换 */
+  body.palette-terracotta { --accent: #C97E4E; --accent-light: #E8C9B0; --accent-dark: #A66238; --bg: #F7F1E6; --bg-card: #FFFDF8; --text-primary: #3A3530; --text-secondary: #6B645C; --text-tertiary: #9A9186; --divider: #D9CFC0; }
+  body.palette-slate      { --accent: #3A506B; --accent-light: #B8C9D9; --accent-dark: #28384A; --bg: #EDF3F8; --bg-card: #FAFCFE; --text-primary: #2C3642; --text-secondary: #5A6573; --text-tertiary: #8A94A0; --divider: #C8D4E0; }
+  body.palette-teal       { --accent: #4A9E9B; --accent-light: #B8D9D7; --accent-dark: #357D7A; --bg: #EAF1E3; --bg-card: #F8FAF4; --text-primary: #364238; --text-secondary: #5E6B5A; --text-tertiary: #8E9678; --divider: #C8D4C0; }
+  body.palette-purple     { --accent: #7A6296; --accent-light: #C9BED9; --accent-dark: #5E4A78; --bg: #F7F3ED; --bg-card: #FDFBF7; --text-primary: #3A3542; --text-secondary: #655D70; --text-tertiary: #8A8294; --divider: #D4CCD9; }
+  body.palette-sage       { --accent: #5F6B4F; --accent-light: #B8C2A8; --accent-dark: #455038; --bg: #EAF1E3; --bg-card: #F6F8F0; --text-primary: #363D2E; --text-secondary: #5C664E; --text-tertiary: #8E9678; --divider: #C8D0B8; }
+  body.palette-caramel    { --accent: #8A624A; --accent-light: #D4B8A0; --accent-dark: #6A4A36; --bg: #F4E6C8; --bg-card: #FFF8E8; --text-primary: #4A3A2A; --text-secondary: #7A6550; --text-tertiary: #A09078; --divider: #E0D0B0; }
+  body.palette-sage-light { --accent: #8FA08A; --accent-light: #CCD4C5; --accent-dark: #6B7A66; --bg: #F2EAD9; --bg-card: #FDFBF5; --text-primary: #3D4035; --text-secondary: #6B6E5E; --text-tertiary: #9A9988; --divider: #D4CEBA; }
+
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: var(--bg);
+    font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---------- 顶部装饰 ---------- */
+  .header-deco {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent), var(--accent-light));
+  }
+
+  /* ---------- 品牌标识 ---------- */
+  .brand {
+    position: absolute;
+    top: 32px; right: 48px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 22px; font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 2px;
+  }
+  .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+
+  /* ---------- 学科标签 ---------- */
+  .subject-tag {
+    position: absolute;
+    top: 100px; left: 60px;
+    padding: 8px 20px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-radius: 24px;
+    font-size: 24px; font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 标题区 ---------- */
+  .title-section {
+    padding: 180px 60px 30px;
+    text-align: center;
+  }
+  .title-main {
+    font-size: 68px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .title-main .accent { color: var(--accent); }
+  .title-sub {
+    font-size: 28px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ---------- 核心概念区 ---------- */
+  .concept-hero {
+    margin: 0 60px 30px;
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-card) 100%);
+    border-radius: 24px;
+    padding: 36px 40px;
+    border-left: 6px solid var(--accent);
+    position: relative;
+  }
+  .concept-hero-icon {
+    position: absolute;
+    top: -30px;
+    right: 40px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    box-shadow: var(--shadow);
+  }
+  .concept-definition {
+    font-size: 28px;
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-weight: 500;
+  }
+  .concept-definition strong {
+    color: var(--accent-dark);
+    font-weight: 700;
+  }
+
+  /* ---------- 要点卡片容器 ---------- */
+  .cards-container {
+    padding: 10px 60px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--accent);
+  }
+
+  .card-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    flex-shrink: 0;
+  }
+
+  .card-number {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--accent-light);
+    opacity: 0.5;
+    line-height: 1;
+  }
+
+  .card-content {
+    flex: 1;
+    padding-right: 50px;
+  }
+
+  .card-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 24px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .card-keywords {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .keyword-tag {
+    padding: 5px 14px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-radius: 14px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  /* ---------- 底部提示 ---------- */
+  .tip-section {
+    position: absolute;
+    bottom: 100px;
+    left: 60px; right: 60px;
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 28px 36px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .tip-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+  .tip-content .tip-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .tip-content .tip-text {
+    font-size: 22px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ---------- 页脚 ---------- */
+  .footer {
+    position: absolute;
+    bottom: 40px; left: 0; right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-tertiary);
+    letter-spacing: 4px;
+  }
+</style>
+</head>
+<body class="palette-terracotta">
+
+  <!-- 顶部装饰条 -->
+  <div class="header-deco"></div>
+
+  <!-- 品牌标识 -->
+  <div class="brand">
+    <span class="dot"></span>
+    <span>纳川图解</span>
+  </div>
+
+  <!-- 学科标签 -->
+  <div class="subject-tag">{{subject}} · {{grade}}</div>
+
+  <!-- 主标题 -->
+  <div class="title-section">
+    <div class="title-main">{{title}}</div>
+    <div class="title-sub">{{subtitle}}</div>
+  </div>
+
+  <!-- 核心概念定义 -->
+  <div class="concept-hero">
+    <div class="concept-hero-icon">{{hero_icon}}</div>
+    <div class="concept-definition">{{definition}}</div>
+  </div>
+
+  <!-- 要点卡片 -->
+  <div class="cards-container">
+    {{#cards}}
+    <div class="card">
+      <div class="card-icon">{{icon}}</div>
+      <div class="card-number">{{number}}</div>
+      <div class="card-content">
+        <div class="card-title">{{title}}</div>
+        <div class="card-desc">{{description}}</div>
+        {{#keywords}}
+        <div class="card-keywords">
+          {{#keyword_list}}
+          <span class="keyword-tag">{{.}}</span>
+          {{/keyword_list}}
+        </div>
+        {{/keywords}}
+      </div>
+    </div>
+    {{/cards}}
+  </div>
+
+  <!-- 底部提示 -->
+  <div class="tip-section">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <div class="tip-title">学习要点</div>
+      <div class="tip-text">{{tip}}</div>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer">NACHUAN · 准高中生AI学习伙伴</div>
+
+</body>
+</html>

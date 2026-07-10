@@ -1,0 +1,112 @@
+<!-- ============================================================
+  scene-formula.html — 公式推导场景模板
+  ============================================================
+  用途：核心公式讲解 + 变量解释 + 推导过程
+  插槽：
+    #formula-main    — 核心公式（大号显示）
+    #formula-vars    — 变量解释区（变量名 + 含义 + 单位）
+    #formula-derive  — 推导过程（可选，步骤式展示）
+    .info-card       — 要点卡片
+  动画：公式逐部分显现 + 变量逐个解释 + 推导步骤递进
+  配色：公式用主色高亮，变量用不同颜色区分
+  ============================================================ -->
+
+<div class="scene scene-formula">
+  <div class="ghost" data-layout-ignore>01</div>
+  <div class="section-chip"><span class="num">1</span><span class="label">公式标题</span></div>
+
+  <div class="scene-content">
+    <!-- 左侧：公式 + 推导 -->
+    <div class="diagram-zone" style="display: flex; flex-direction: column; justify-content: center; gap: 40px;">
+      <!-- 核心公式 -->
+      <div id="formula-main" style="
+        font-family: 'Songti SC', serif;
+        font-size: 72px;
+        font-weight: 900;
+        color: var(--primary);
+        text-align: center;
+        letter-spacing: 0.05em;
+        padding: 30px 40px;
+        background: color-mix(in srgb, #fff 85%, transparent);
+        border-radius: 18px;
+        border-left: 6px solid var(--primary);
+        box-shadow: 0 12px 36px color-mix(in srgb, var(--primary) 10%, transparent);
+      ">
+        v = s / t
+      </div>
+
+      <!-- 推导步骤（可选，不需要可以删掉） -->
+      <div id="formula-derive" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="derive-step" style="
+          font-size: 28px; padding: 12px 24px;
+          background: color-mix(in srgb, var(--soft) 90%, transparent);
+          border-radius: 10px; border-left: 4px solid var(--accent);
+        ">
+          <span style="color: var(--accent); font-weight: 700; margin-right: 12px;">①</span>
+          推导步骤一
+        </div>
+        <div class="derive-step" style="
+          font-size: 28px; padding: 12px 24px;
+          background: color-mix(in srgb, var(--soft) 90%, transparent);
+          border-radius: 10px; border-left: 4px solid var(--accent);
+        ">
+          <span style="color: var(--accent); font-weight: 700; margin-right: 12px;">②</span>
+          推导步骤二
+        </div>
+        <div class="derive-step" style="
+          font-size: 28px; padding: 12px 24px;
+          background: color-mix(in srgb, var(--soft) 90%, transparent);
+          border-radius: 10px; border-left: 4px solid var(--accent);
+        ">
+          <span style="color: var(--accent); font-weight: 700; margin-right: 12px;">③</span>
+          得到结论 → <span style="color: var(--primary); font-weight: 800;">v = s / t</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：变量解释 + 要点 -->
+    <div class="card-zone">
+      <!-- 变量解释卡片 -->
+      <div class="info-card" id="formula-vars">
+        <div class="card-title">变量含义</div>
+        <div class="card-body">
+          <p><span style="color: var(--primary); font-weight: 800; font-family: 'Songti SC', serif; font-size: 34px;">v</span> — 速度，单位：m/s</p>
+          <p><span style="color: var(--accent); font-weight: 800; font-family: 'Songti SC', serif; font-size: 34px;">s</span> — 路程，单位：m</p>
+          <p><span style="color: var(--neutral); font-weight: 800; font-family: 'Songti SC', serif; font-size: 34px;">t</span> — 时间，单位：s</p>
+        </div>
+      </div>
+
+      <!-- 要点卡片 -->
+      <div class="info-card">
+        <div class="card-title">核心要点</div>
+        <div class="card-body">
+          <p>要点一：速度表示运动快慢</p>
+          <p>要点二：单位时间内通过的路程</p>
+          <p>要点三：匀速运动速度不变</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========= 此场景入场动画（GSAP） =========
+  用法：把下面这段函数体复制到 index.html 的对应 sceneN(t) 函数里
+
+function sceneN(t) {
+  // 核心公式从大到小弹入
+  tl.fromTo("#formula-main", { scale: 1.5, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" }, t + 0.2);
+  // 推导步骤逐条滑入
+  tl.fromTo(".derive-step", { x: -40, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.5, stagger: 0.3, ease: "power2.out" }, t + 0.8);
+  // 变量卡片从右滑入
+  tl.fromTo("#formula-vars", { x: 80, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.2);
+  // 要点卡片从下滑入
+  tl.fromTo(".card-zone .info-card:last-child", { y: 40, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, t + 1.7);
+  // 环境动效：公式轻微脉冲
+  tl.to("#formula-main", { scale: 1.02, yoyo: true, repeat: -1,
+    duration: 2.0, ease: "sine.inOut" }, t + 1.5);
+}
+-->

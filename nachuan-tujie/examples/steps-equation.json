@@ -1,0 +1,50 @@
+{
+  "subject": "数学",
+  "grade": "初一",
+  "title": "解一元一次方程",
+  "subtitle": "五步求解法，按顺序操作",
+  "steps": [
+    {
+      "number": "1",
+      "icon": "📝",
+      "title": "去分母",
+      "description": "方程两边同乘各分母的最小公倍数，消去分母。",
+      "detail": "注意：不要漏乘不含分母的项；分子是多项式时要加括号。",
+      "has_next": true
+    },
+    {
+      "number": "2",
+      "icon": "📐",
+      "title": "去括号",
+      "description": "按去括号法则去掉括号，注意符号变化。",
+      "detail": "括号前是负号时，括号内各项都要变号。",
+      "has_next": true
+    },
+    {
+      "number": "3",
+      "icon": "↔️",
+      "title": "移项",
+      "description": "把含未知数的项移到左边，常数项移到右边。",
+      "detail": "移项要变号！这是最容易出错的一步。",
+      "has_next": true
+    },
+    {
+      "number": "4",
+      "icon": "➕",
+      "title": "合并同类项",
+      "description": "把方程化成 ax = b (a≠0) 的形式。",
+      "detail": "系数相加减，字母和指数不变。",
+      "has_next": true
+    },
+    {
+      "number": "5",
+      "icon": "🎯",
+      "title": "系数化为1",
+      "description": "方程两边同除以未知数的系数 a，得到 x = b/a。",
+      "detail": "注意：除数不能为0，即 a ≠ 0。",
+      "has_next": false
+    }
+  ],
+  "summary": "口诀：去分母→去括号→移项→合并同类项→系数化为1。每做完一步，养成检验的好习惯，把解代入原方程验证。",
+  "palette": "purple"
+}

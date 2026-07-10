@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>纳川图解 · 公式式模板</title>
+<style>
+  /* ============================================================
+     纳川图解 · 公式式模板
+     适合：物理公式、数学公式
+     固定尺寸：1080 x 1920 (9:16 竖版)
+     ============================================================ */
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #C97E4E;
+    --accent-light: #E8C9B0;
+    --accent-dark: #A66238;
+    --bg: #F7F1E6;
+    --bg-card: #FFFDF8;
+    --text-primary: #3A3530;
+    --text-secondary: #6B645C;
+    --text-tertiary: #9A9186;
+    --divider: #D9CFC0;
+    --shadow: 0 4px 20px rgba(58, 53, 48, 0.08);
+  }
+
+  body.palette-terracotta { --accent: #C97E4E; --accent-light: #E8C9B0; --accent-dark: #A66238; --bg: #F7F1E6; --bg-card: #FFFDF8; --text-primary: #3A3530; --text-secondary: #6B645C; --text-tertiary: #9A9186; --divider: #D9CFC0; }
+  body.palette-slate      { --accent: #3A506B; --accent-light: #B8C9D9; --accent-dark: #28384A; --bg: #EDF3F8; --bg-card: #FAFCFE; --text-primary: #2C3642; --text-secondary: #5A6573; --text-tertiary: #8A94A0; --divider: #C8D4E0; }
+  body.palette-teal       { --accent: #4A9E9B; --accent-light: #B8D9D7; --accent-dark: #357D7A; --bg: #EAF1E3; --bg-card: #F8FAF4; --text-primary: #364238; --text-secondary: #5E6B5A; --text-tertiary: #8E9678; --divider: #C8D4C0; }
+  body.palette-purple     { --accent: #7A6296; --accent-light: #C9BED9; --accent-dark: #5E4A78; --bg: #F7F3ED; --bg-card: #FDFBF7; --text-primary: #3A3542; --text-secondary: #655D70; --text-tertiary: #8A8294; --divider: #D4CCD9; }
+  body.palette-sage       { --accent: #5F6B4F; --accent-light: #B8C2A8; --accent-dark: #455038; --bg: #EAF1E3; --bg-card: #F6F8F0; --text-primary: #363D2E; --text-secondary: #5C664E; --text-tertiary: #8E9678; --divider: #C8D0B8; }
+  body.palette-caramel    { --accent: #8A624A; --accent-light: #D4B8A0; --accent-dark: #6A4A36; --bg: #F4E6C8; --bg-card: #FFF8E8; --text-primary: #4A3A2A; --text-secondary: #7A6550; --text-tertiary: #A09078; --divider: #E0D0B0; }
+
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: var(--bg);
+    font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .header-deco {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent), var(--accent-light));
+  }
+
+  .brand {
+    position: absolute;
+    top: 32px; right: 48px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 22px; font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 2px;
+  }
+  .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+
+  .subject-tag {
+    position: absolute;
+    top: 100px; left: 60px;
+    padding: 8px 20px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-radius: 24px;
+    font-size: 24px; font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* 标题区 */
+  .title-section {
+    padding: 180px 60px 10px;
+    text-align: center;
+  }
+  .formula-name {
+    font-size: 42px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+  .title-main {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+  .title-main .accent { color: var(--accent); }
+
+  /* 大公式展示区 */
+  .formula-display {
+    margin: 50px 60px 40px;
+    background: var(--bg-card);
+    border-radius: 28px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    position: relative;
+    border: 2px solid var(--accent-light);
+  }
+
+  .formula-display::before {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .formula-badge {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 28px;
+    background: var(--accent);
+    color: white;
+    border-radius: 18px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+
+  .main-formula {
+    font-family: "Cambria Math", "Times New Roman", "STIX Two Math", Georgia, serif;
+    font-size: 88px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  .main-formula .var-accent {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .main-formula sup, .main-formula sub {
+    font-size: 0.6em;
+  }
+
+  .formula-desc {
+    font-size: 26px;
+    color: var(--text-secondary);
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--divider);
+  }
+
+  /* 变量说明区 */
+  .variables-section {
+    margin: 0 60px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .variables-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .variable-item {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .var-symbol {
+    font-family: "Cambria Math", "Times New Roman", Georgia, serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 60px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .var-info .var-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .var-info .var-unit {
+    font-size: 20px;
+    color: var(--text-tertiary);
+  }
+
+  /* 适用条件 */
+  .conditions-section {
+    margin: 40px 60px 0;
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-card) 100%);
+    border-radius: 20px;
+    padding: 28px 32px;
+    border-left: 6px solid var(--accent);
+  }
+  .conditions-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .conditions-list {
+    list-style: none;
+  }
+  .conditions-list li {
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.7;
+    padding-left: 28px;
+    position: relative;
+  }
+  .conditions-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* 注意事项 */
+  .notes-section {
+    position: absolute;
+    bottom: 100px;
+    left: 60px; right: 60px;
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+  }
+  .notes-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .notes-text {
+    font-size: 22px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 40px; left: 0; right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-tertiary);
+    letter-spacing: 4px;
+  }
+</style>
+</head>
+<body class="palette-terracotta">
+
+  <div class="header-deco"></div>
+
+  <div class="brand">
+    <span class="dot"></span>
+    <span>纳川图解</span>
+  </div>
+
+  <div class="subject-tag">{{subject}} · {{grade}}</div>
+
+  <div class="title-section">
+    <div class="formula-name">{{formula_category}}</div>
+    <div class="title-main">{{formula_title}}</div>
+  </div>
+
+  <!-- 大公式 -->
+  <div class="formula-display">
+    <div class="formula-badge">核心公式</div>
+    <div class="main-formula">{{{formula_content}}}</div>
+    <div class="formula-desc">{{formula_description}}</div>
+  </div>
+
+  <!-- 变量说明 -->
+  <div class="variables-section">
+    <div class="section-title">📐 变量说明</div>
+    <div class="variables-grid">
+      {{#variables}}
+      <div class="variable-item">
+        <div class="var-symbol">{{symbol}}</div>
+        <div class="var-info">
+          <div class="var-name">{{name}}</div>
+          <div class="var-unit">单位：{{unit}}</div>
+        </div>
+      </div>
+      {{/variables}}
+    </div>
+  </div>
+
+  <!-- 适用条件 -->
+  <div class="conditions-section">
+    <div class="conditions-title">✅ 适用条件</div>
+    <ul class="conditions-list">
+      {{#conditions}}
+      <li>{{.}}</li>
+      {{/conditions}}
+    </ul>
+  </div>
+
+  <!-- 注意事项 -->
+  <div class="notes-section">
+    <div class="notes-title">⚠️ 注意事项</div>
+    <div class="notes-text">{{notes}}</div>
+  </div>
+
+  <div class="footer">NACHUAN · 准高中生AI学习伙伴</div>
+
+</body>
+</html>

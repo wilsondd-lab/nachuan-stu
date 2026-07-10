@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""把 audio/durations.json 的时间轴同步进 index.html。
+"""重配音后同步时间轴到 index.html。
 
-重跑 TTS 后 (换音色/改旁白) 音频时长会变, 用本脚本一键同步, 不要手抄数字:
+改了旁白文案或换了音色后，不要手抄新数字，用这个脚本一键同步。
+
+用法:
     python3 sync_timeline.py <project_dir>
 
-要求 index.html 遵循 assets/video-template 的约定:
-    - 根 div 有 data-duration
-    - 音频标签形如 <audio id="aN" src="audio/seg-0N.mp3" data-start=".." data-duration="..">
-    - SEGMENTS 数组条目形如 { sel: "#sN", start: .., duration: .., ... }
-    - 场景注释形如 <!-- ... 场景 N: xxx (a.aa - b.bb) ... --> (可选)
-
-同步后需要重新渲染: bash build_video.sh <project_dir>
+会更新 index.html 中的:
+    - root 的 data-duration
+    - 所有 <audio> 的 data-start / data-duration
+    - SEGMENTS_VIDEO 数组的 start/duration/subtitle
 """
 
 import json
@@ -20,63 +19,71 @@ import sys
 from pathlib import Path
 
 
+def die(msg):
+    print(f"❌ {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
 def main():
-    project = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
-    html_path = project / "index.html"
-    dur_path = project / "audio" / "durations.json"
-    for p in (html_path, dur_path):
+    if len(sys.argv) < 2:
+        print("用法: python3 sync_timeline.py <project_dir>")
+        sys.exit(1)
+
+    proj = Path(sys.argv[1]).resolve()
+    dur_path = proj / "audio" / "durations.json"
+    html_path = proj / "index.html"
+
+    for p in (dur_path, html_path):
         if not p.exists():
-            print(f"❌ 找不到 {p}", file=sys.stderr)
-            sys.exit(1)
+            die(f"找不到 {p}")
 
-    d = json.loads(dur_path.read_text(encoding="utf-8"))
-    segs = d["segments"]
+    dur = json.loads(dur_path.read_text(encoding="utf-8"))
+    segs = dur["segments"]
     html = html_path.read_text(encoding="utf-8")
-    changes = []
 
-    def sub(pattern, repl, text, label, count=0):
-        new, n = re.subn(pattern, repl, text, count=count)
-        changes.append(f"   {label}: {n} 处")
-        return new
+    # 1. 更新 root data-duration
+    html = re.sub(
+        r'data-duration="[\d.]+"',
+        f'data-duration="{dur["total"]}"',
+        html, count=1,
+    )
 
-    # 1. 根 data-duration (只改带 data-composition-id 块里的第一个)
-    html = sub(r'(data-composition-id="[^"]+"[^>]*?data-duration=")[\d.]+(")',
-               rf'\g<1>{d["total"]}\g<2>', html, "根 data-duration", count=1)
-    if f'data-duration="{d["total"]}"' not in html:
-        # 根 div 跨多行时 data-duration 在单独一行
-        html = sub(r'(data-start="0" data-duration=")[\d.]+(")',
-                   rf'\g<1>{d["total"]}\g<2>', html, "根 data-duration(跨行)", count=1)
+    # 2. 更新 audio 标签的 data-start / data-duration
+    # 按顺序替换 <audio ...> 的 data-start 和 data-duration
+    for i, seg in enumerate(segs):
+        # 替换第 i+1 个 audio 标签
+        idx = i + 1
+        # 匹配特定 id 的 audio
+        pattern = rf'(<audio id="a{idx}"[^>]*data-start=")[\d.]+("[^>]*data-duration=")[\d.]+(")'
+        repl = rf'\g<1>{seg["audio_start"]}\g<2>{seg["audio_duration"]}\g<3>'
+        html = re.sub(pattern, repl, html)
 
-    # 2. 音频标签
-    for s in segs:
-        html = sub(
-            rf'(<audio id="a{s["id"]}"[^>]*?data-start=")[\d.]+("\s+data-duration=")[\d.]+(")',
-            rf'\g<1>{s["audio_start"]}\g<2>{s["audio_duration"]}\g<3>',
-            html, f'audio a{s["id"]}')
+    # 3. 更新 SEGMENTS_VIDEO 数组
+    # 找到 SEGMENTS_VIDEO = [ ... ]; 块
+    seg_match = re.search(
+        r'(const SEGMENTS_VIDEO = \[)(.*?)(\];)',
+        html, re.DOTALL,
+    )
+    if not seg_match:
+        die("找不到 SEGMENTS_VIDEO 数组")
 
-    # 3. SEGMENTS 数组
-    for s in segs:
-        html = sub(
-            rf'(sel: "#s{s["id"]}", start: )[\d.]+(,\s*duration: )[\d.]+(,)',
-            rf'\g<1>{s["start"]}\g<2>{s["duration"]}\g<3>',
-            html, f'SEGMENTS #s{s["id"]}')
+    new_segs = []
+    for i, s in enumerate(segs, start=1):
+        # 从原数据里拿 transition（如果 durations 里没有就用 blur-crossfade）
+        trans = s.get("transition", "blur-crossfade")
+        subtitle_escaped = json.dumps(s["subtitle"], ensure_ascii=False)
+        new_segs.append(
+            f'      {{ sel: "#s{i}", start: {s["start"]}, duration: {s["duration"]}, '
+            f'transition: "{trans}",\n        subtitle: {subtitle_escaped} }},'
+        )
 
-    # 4. 场景注释里的时间区间 (可选, 匹配不到就跳过)
-    bounds = [s["start"] for s in segs] + [d["total"]]
-    for s in segs:
-        html, n = re.subn(
-            rf'(场景 {s["id"]}: [^(]*\()[\d.]+ - [\d.]+(\))',
-            rf'\g<1>{s["start"]:.2f} - {bounds[s["id"]]:.2f}\g<2>', html)
+    new_segs_block = "\n".join(new_segs)
+    html = html[:seg_match.start(2)] + "\n" + new_segs_block + "\n    " + html[seg_match.end(2):]
 
     html_path.write_text(html, encoding="utf-8")
-    print(f"==> 同步 {dur_path} → {html_path} (total {d['total']}s)")
-    print("\n".join(changes))
-    missing = [c for c in changes if ": 0 处" in c]
-    if missing:
-        print("⚠ 以下项没匹配到, 请检查 index.html 是否遵循模板约定:")
-        print("\n".join(missing))
-        sys.exit(2)
-    print("✅ 完成。重新渲染: bash scripts/build_video.sh <project_dir>")
+    print(f"✅ 时间轴已同步 → {html_path}")
+    print(f"   总时长: {dur['total']}s  场景数: {len(segs)}")
+    print("   下一步: 重新渲染")
 
 
 if __name__ == "__main__":

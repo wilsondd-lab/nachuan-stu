@@ -1,0 +1,126 @@
+<!-- ============================================================
+  scene-example.html — 生活例子场景模板
+  ============================================================
+  用途：生活化场景 + 知识点联系，用学生熟悉的事物解释概念
+  插槽：
+    #example-scene  — 生活场景插图（SVG，如汽车、操场、厨房）
+    #example-question — 问题/引入句
+    #example-explain — 知识点联系解释
+    .info-card      — 要点卡片
+  动画：场景淡入 + 问题浮现 + 知识点连线 + 卡片滑入
+  配色：温暖生活感，用场景本身的颜色，知识点用主色高亮
+  ============================================================ -->
+
+<div class="scene scene-example">
+  <div class="ghost" data-layout-ignore>01</div>
+  <div class="section-chip"><span class="num">1</span><span class="label">生活例子</span></div>
+
+  <div class="scene-content">
+    <!-- 左侧：生活场景插图 -->
+    <div class="diagram-zone" id="example-scene">
+      <svg viewBox="0 0 900 700" style="width: 100%; height: 100%; overflow: visible;">
+        <!-- TODO: 替换为生活场景 SVG
+             示例：公路上的汽车（速度）、厨房烧水（热学）、操场上的同学（运动）
+             原则：画面简洁，重点突出，用莫兰迪配色 -->
+
+        <!-- 占位场景：一条路 + 一辆车 -->
+        <!-- 地面 -->
+        <rect x="0" y="500" width="900" height="200" fill="color-mix(in srgb, var(--neutral) 15%, transparent)"/>
+        <!-- 路 -->
+        <rect x="0" y="480" width="900" height="50" fill="color-mix(in srgb, var(--ink) 70%, transparent)"/>
+        <line x1="0" y1="505" x2="900" y2="505" stroke="#fff" stroke-width="3" stroke-dasharray="40 30"/>
+        <!-- 汽车（简化） -->
+        <g id="car" transform="translate(350, 380)">
+          <rect x="0" y="40" width="220" height="60" rx="10" fill="var(--primary)"/>
+          <rect x="40" y="0" width="140" height="50" rx="8" fill="var(--accent)"/>
+          <rect x="55" y="10" width="50" height="35" rx="4" fill="color-mix(in srgb, #fff 70%, var(--accent))"/>
+          <rect x="115" y="10" width="50" height="35" rx="4" fill="color-mix(in srgb, #fff 70%, var(--accent))"/>
+          <circle cx="55" cy="105" r="25" fill="var(--ink)"/>
+          <circle cx="55" cy="105" r="12" fill="var(--neutral)"/>
+          <circle cx="175" cy="105" r="25" fill="var(--ink)"/>
+          <circle cx="175" cy="105" r="12" fill="var(--neutral)"/>
+        </g>
+        <!-- 标注 -->
+        <g class="callout" transform="translate(580, 320)">
+          <line x1="0" y1="0" x2="80" y2="50" stroke="var(--primary)" stroke-width="3" stroke-dasharray="6 4"/>
+          <circle cx="0" cy="0" r="8" fill="var(--primary)"/>
+          <rect x="85" y="35" width="160" height="40" rx="8" fill="#fff" stroke="var(--primary)" stroke-width="2"/>
+          <text x="165" y="62" text-anchor="middle" font-size="22" fill="var(--primary)" font-weight="bold">每小时跑100km</text>
+        </g>
+        <!-- 云 -->
+        <g fill="color-mix(in srgb, var(--soft) 90%, transparent)" opacity="0.8">
+          <ellipse cx="150" cy="150" rx="60" ry="30"/>
+          <ellipse cx="200" cy="140" rx="50" ry="25"/>
+          <ellipse cx="700" cy="100" rx="70" ry="35"/>
+          <ellipse cx="760" cy="90" rx="45" ry="22"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 右侧：问题 + 解释 + 要点 -->
+    <div class="card-zone">
+      <!-- 问题气泡 -->
+      <div id="example-question" style="
+        background: #fff;
+        border-radius: 20px;
+        padding: 24px 32px;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--ink);
+        position: relative;
+        box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 12%, transparent);
+        border-left: 6px solid var(--accent);
+      ">
+        你知道汽车仪表盘上的<br/>"100 km/h"是什么意思吗？
+      </div>
+
+      <!-- 解释 -->
+      <div id="example-explain" class="info-card">
+        <div class="card-title">知识点联系</div>
+        <div class="card-body">
+          <p>汽车时速表显示的就是<strong style="color: var(--primary);">速度</strong></p>
+          <p>100 km/h = 每小时行驶100公里</p>
+          <p>速度越大，相同时间跑得越远</p>
+        </div>
+      </div>
+
+      <!-- 要点卡片 -->
+      <div class="info-card">
+        <div class="card-title">生活中的速度</div>
+        <div class="card-body">
+          <p>人步行：约 1.2 m/s</p>
+          <p>自行车：约 5 m/s</p>
+          <p>高铁：约 100 m/s</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========= 此场景入场动画（GSAP） =========
+  用法：把下面这段函数体复制到 index.html 的对应 sceneN(t) 函数里
+
+function sceneN(t) {
+  // 场景整体淡入
+  tl.fromTo("#example-scene svg", { scale: 0.95, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.7, ease: "power2.out" }, t + 0.2);
+  // 汽车从左驶入
+  tl.fromTo("#car", { x: -200, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.4);
+  // 问题气泡弹出
+  tl.fromTo("#example-question", { y: -30, opacity: 0, scale: 0.9 },
+    { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.5)" }, t + 0.9);
+  // 解释卡片滑入
+  tl.fromTo("#example-explain", { x: 60, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.4);
+  // 要点卡片滑入
+  tl.fromTo(".card-zone .info-card:last-child", { x: 60, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, t + 1.9);
+  // callout 标注浮现
+  tl.fromTo(".callout", { opacity: 0, scale: 0.8 },
+    { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, t + 1.6);
+  // 环境动效：汽车轻微上下浮动
+  tl.to("#car", { y: -6, yoyo: true, repeat: -1,
+    duration: 1.5, ease: "sine.inOut" }, t + 1.5);
+}
+-->

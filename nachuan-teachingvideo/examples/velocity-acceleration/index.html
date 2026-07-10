@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-composition-variables='[{"id":"mode","type":"enum","label":"输出模式","default":"video","options":[{"value":"video","label":"视频(带配音字幕)"},{"value":"silent","label":"无声MP4(循环)"}]}]'>
+<!--
+  速度与加速度 · 纳川教学视频完整示例
+  =================================
+  7段完整场景，演示：
+  - s1 标题引入 (scene-title 模板)
+  - s2 速度公式 (scene-formula 模板)
+  - s3 加速度公式 (scene-formula 模板)
+  - s4 核心对比 (scene-compare 模板)
+  - s5 生活例子 (scene-example 模板)
+  - s6 小测验 (scene-quiz 模板)
+  - s7 总结收尾 (scene-summary 模板)
+
+  渲染: bash ../../scripts/render_video.sh .
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="../../assets/vendor/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Heiti SC"; src: local("Heiti SC"); }
+    @font-face { font-family: "PingFang SC"; src: local("PingFang SC"); }
+    @font-face { font-family: "Songti SC"; src: local("Songti SC"); }
+    @font-face { font-family: "Noto Sans CJK SC"; src: local("Noto Sans CJK SC"); }
+
+    /* ==== 配色 (palette: mechanics — 力学暖红) ==== */
+    :root {
+      --primary:   #D63B26;
+      --accent:    #F08A24;
+      --highlight: #FFD166;
+      --ink:       #26303A;
+      --neutral:   #64748B;
+      --soft:      #FFFDF8;
+      --line:      #A3AEBB;
+      --bg:        #FBF5EB;
+      --series:    #64748B;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+      font-family: "Heiti SC", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--ink);
+    }
+
+    /* ==== 场景容器 ==== */
+    .scene {
+      position: absolute; top: 0; left: 0;
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+    }
+    .scene + .scene { opacity: 0; }
+    .scene::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(1100px 700px at 78% 22%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 70%),
+        radial-gradient(900px 620px at 10% 90%, color-mix(in srgb, var(--series) 9%, transparent), transparent 72%),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px);
+    }
+    .scene::after {
+      content: ""; position: absolute; inset: 0; z-index: 10;
+      pointer-events: none; mix-blend-mode: multiply; opacity: 0.16;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="240" height="240" filter="url(%23n)" opacity="0.6"/></svg>');
+    }
+    .ghost {
+      position: absolute; right: 48px; bottom: -60px; z-index: 0;
+      font-family: "Songti SC", serif;
+      font-size: 460px; font-weight: 900; line-height: 1;
+      color: color-mix(in srgb, var(--series) 14%, transparent);
+      letter-spacing: -0.04em; user-select: none;
+    }
+
+    .scene-content {
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      padding: 150px 110px 190px;
+      display: flex; gap: 70px; align-items: center;
+    }
+    .diagram-zone { flex: 1.25; height: 100%; position: relative; }
+    .card-zone { flex: 1; display: flex; flex-direction: column; gap: 28px; justify-content: center; }
+
+    /* ==== 组件 ==== */
+    #chapter {
+      position: absolute; top: 42px; right: 56px; z-index: 50;
+      font-size: 26px; font-weight: 600; letter-spacing: 0.12em;
+      color: var(--series);
+      padding-bottom: 6px;
+      border-bottom: 3px solid color-mix(in srgb, var(--series) 45%, transparent);
+    }
+
+    .section-chip {
+      position: absolute; top: 42px; left: 56px; z-index: 5;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-chip .num {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-size: 30px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .section-chip .label {
+      background: #fff; border: 1.5px solid color-mix(in srgb, var(--neutral) 40%, transparent);
+      border-radius: 16px; padding: 10px 26px;
+      font-size: 28px; font-weight: 800;
+      box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+    }
+
+    .pill {
+      background: #fff;
+      border: 1.5px solid color-mix(in srgb, var(--neutral) 40%, transparent);
+      border-radius: 16px; padding: 10px 26px;
+      font-size: 26px; font-weight: 700;
+      box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+    }
+
+    .info-card {
+      border-radius: 18px; overflow: hidden;
+      border: 1.5px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 14px 42px color-mix(in srgb, var(--primary) 9%, transparent);
+      background: color-mix(in srgb, #fff 88%, var(--soft));
+    }
+    .info-card.accent { border-left-color: var(--accent); }
+    .info-card.accent .card-title::before { background: var(--accent); }
+    .info-card.accent .card-title { color: var(--accent); }
+
+    .info-card .card-title {
+      color: var(--neutral);
+      font-size: 22px; font-weight: 700; letter-spacing: 0.35em;
+      margin: 24px 32px 0; padding-bottom: 14px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+    }
+    .info-card .card-title::before {
+      content: ""; width: 12px; height: 12px; flex: none;
+      background: var(--primary);
+    }
+    .info-card .card-body { padding: 20px 32px 28px; display: flex; flex-direction: column; gap: 14px; }
+    .info-card .card-body p {
+      font-size: 28px; line-height: 1.5;
+      padding-left: 24px; position: relative;
+    }
+    .info-card .card-body p::before {
+      content: ""; position: absolute; left: 0; top: 16px;
+      width: 9px; height: 9px; border-radius: 2px;
+      background: color-mix(in srgb, var(--primary) 70%, #fff);
+    }
+    .info-card.accent .card-body p::before {
+      background: color-mix(in srgb, var(--accent) 70%, #fff);
+    }
+    .info-card .formula {
+      font-family: "Songti SC", serif;
+      font-size: 36px; font-weight: 900; color: var(--primary);
+      padding: 10px 0 0; letter-spacing: 0.04em;
+    }
+
+    .summary-bar { display: flex; gap: 56px; justify-content: center; }
+    .badge { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .badge .icon {
+      width: 96px; height: 96px; border-radius: 50%;
+      border: 3px solid var(--primary);
+      background: color-mix(in srgb, var(--primary) 12%, #fff);
+      font-size: 40px; display: flex; align-items: center; justify-content: center;
+      color: var(--primary);
+    }
+    .badge .name { font-size: 24px; font-weight: 700; }
+
+    .t-hero {
+      font-family: "Songti SC", serif;
+      font-size: 120px; font-weight: 900; letter-spacing: 0.01em; color: var(--primary);
+      line-height: 1.08;
+    }
+    .t-title { font-size: 48px; font-weight: 800; }
+    .t-body { font-size: 30px; line-height: 1.6; }
+    sup { font-size: 0.55em; }
+    .t-label { font-size: 24px; font-weight: 600; letter-spacing: 0.35em; color: var(--neutral); }
+
+    /* ==== 字幕 ==== */
+    #subtitle-layer {
+      position: absolute; left: 0; right: 0; bottom: 52px; z-index: 40;
+      display: flex; justify-content: center; pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; bottom: 0; max-width: 1480px;
+      font-size: 32px; line-height: 1.5; font-weight: 600;
+      text-align: center; color: var(--ink);
+      background: color-mix(in srgb, #fff 88%, transparent);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px; padding: 14px 32px;
+      box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 12%, transparent);
+      opacity: 0;
+    }
+
+    .diagram-zone svg { width: 100%; height: 100%; overflow: visible; }
+    .diagram-zone text { font-family: inherit; }
+
+    /* ==== s4 对比场景专用 ==== */
+    .compare-side { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+    .compare-side.right { align-items: flex-end; }
+    .vs-badge {
+      position: absolute; left: 50%; top: 42%;
+      transform: translate(-50%, -50%);
+      width: 90px; height: 90px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-size: 34px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+      box-shadow: 0 8px 32px color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+
+    /* ==== s6 测验场景专用 ==== */
+    .quiz-option {
+      background: #fff;
+      border: 3px solid var(--neutral);
+      border-radius: 18px; padding: 24px 32px;
+      font-size: 30px; font-weight: 700;
+      color: var(--ink);
+      display: flex; align-items: center; gap: 16px;
+      box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 10%, transparent);
+    }
+    .quiz-option .opt-label {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--neutral); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800;
+    }
+    .quiz-option.correct {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+    .quiz-option.correct .opt-label { background: var(--primary); }
+    .quiz-answer {
+      display: flex; align-items: flex-start; gap: 24px;
+      padding: 24px 40px;
+      background: color-mix(in srgb, var(--primary) 8%, #fff);
+      border-radius: 18px;
+      border-left: 6px solid var(--primary);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .quiz-answer .check { font-size: 44px; font-weight: 900; color: var(--primary); flex-shrink: 0; }
+
+    /* ==== s7 总结场景专用 ==== */
+    .dual-formula {
+      display: flex; align-items: center; justify-content: center; gap: 80px;
+      width: 100%;
+    }
+    .formula-block {
+      text-align: center;
+    }
+    .formula-block .big {
+      font-family: "Songti SC", serif;
+      font-size: 72px; font-weight: 900;
+      line-height: 1.2;
+    }
+    .formula-block.primary .big { color: var(--primary); }
+    .formula-block.accent .big { color: var(--accent); }
+    .formula-block .desc {
+      font-size: 26px; color: var(--neutral);
+      margin-top: 12px; letter-spacing: 0.2em;
+    }
+    .formula-divider {
+      font-size: 60px; color: var(--line); font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+       data-start="0" data-duration="98.5">
+
+    <!-- ============ 场景 1: 标题引入 ============ -->
+    <div id="s1" class="scene">
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 40px;">
+        <!-- 主题图标：汽车+速度表 -->
+        <div id="s1-icon" style="height: 200px;">
+          <svg viewBox="0 0 500 200" style="height: 200px; overflow: visible;">
+            <!-- 速度表外框 -->
+            <g id="speedometer" transform="translate(250, 130)">
+              <!-- 表盘 -->
+              <circle cx="0" cy="0" r="100" fill="#fff" stroke="var(--primary)" stroke-width="6"/>
+              <!-- 刻度 -->
+              <g stroke="var(--neutral)" stroke-width="2">
+                <line x1="0" y1="-85" x2="0" y2="-75"/>
+                <line x1="-70" y1="-49" x2="-62" y2="-43"/>
+                <line x1="-85" y1="0" x2="-75" y2="0"/>
+                <line x1="-70" y1="49" x2="-62" y2="43"/>
+                <line x1="70" y1="-49" x2="62" y2="-43"/>
+                <line x1="85" y1="0" x2="75" y2="0"/>
+              </g>
+              <!-- 刻度数字 -->
+              <text x="0" y="-60" text-anchor="middle" font-size="18" fill="var(--neutral)" font-weight="700">0</text>
+              <text x="-58" y="-35" text-anchor="middle" font-size="18" fill="var(--neutral)" font-weight="700">40</text>
+              <text x="-72" y="8" text-anchor="middle" font-size="18" fill="var(--neutral)" font-weight="700">80</text>
+              <text x="58" y="-35" text-anchor="middle" font-size="18" fill="var(--neutral)" font-weight="700">120</text>
+              <text x="72" y="8" text-anchor="middle" font-size="18" fill="var(--neutral)" font-weight="700">160</text>
+              <!-- 指针 -->
+              <g id="needle">
+                <line x1="0" y1="10" x2="0" y2="-70" stroke="var(--primary)" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="12" fill="var(--primary)"/>
+                <circle cx="0" cy="0" r="5" fill="#fff"/>
+              </g>
+              <!-- 中心文字 -->
+              <text x="0" y="55" text-anchor="middle" font-size="14" fill="var(--neutral)" letter-spacing="2">km/h</text>
+            </g>
+          </svg>
+        </div>
+        <div id="s1-title" class="t-hero">速度与加速度</div>
+        <div id="s1-pills" style="display: flex; gap: 20px;">
+          <span class="pill">速度</span>
+          <span class="pill">加速度</span>
+          <span class="pill">核心区别</span>
+          <span class="pill">生活例子</span>
+          <span class="pill">小测验</span>
+        </div>
+        <div id="s1-tagline" class="t-label">—— 别再搞混了 ——</div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 2: 什么是速度 ============ -->
+    <div id="s2" class="scene">
+      <div class="ghost" data-layout-ignore>01</div>
+      <div class="section-chip"><span class="num">1</span><span class="label">什么是速度</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s2-diagram">
+          <svg viewBox="0 0 900 700" style="width: 100%; height: 100%; overflow: visible;">
+            <!-- 路面 -->
+            <rect x="0" y="520" width="900" height="180" fill="color-mix(in srgb, var(--neutral) 15%, transparent)"/>
+            <line x1="0" y1="510" x2="900" y2="510" stroke="var(--ink)" stroke-width="4" opacity="0.7"/>
+            <line x1="0" y1="545" x2="900" y2="545" stroke="#fff" stroke-width="3" stroke-dasharray="40 30"/>
+
+            <!-- 时间标尺 -->
+            <g id="s2-timeline">
+              <line x1="80" y1="630" x2="820" y2="630" stroke="var(--neutral)" stroke-width="3"/>
+              <circle cx="80" cy="630" r="8" fill="var(--accent)"/>
+              <circle cx="820" cy="630" r="8" fill="var(--primary)"/>
+              <text x="80" y="670" text-anchor="middle" font-size="22" fill="var(--neutral)" font-weight="700">t = 0</text>
+              <text x="820" y="670" text-anchor="middle" font-size="22" fill="var(--neutral)" font-weight="700">t = 1h</text>
+              <text x="450" y="600" text-anchor="middle" font-size="26" fill="var(--accent)" font-weight="700">时间 t</text>
+            </g>
+
+            <!-- 路程箭头 -->
+            <g id="s2-distance">
+              <path d="M 120 450 L 780 450" stroke="var(--primary)" stroke-width="4" fill="none" stroke-dasharray="10 6" id="s2-path"/>
+              <polygon points="780,450 765,442 765,458" fill="var(--primary)"/>
+              <text x="450" y="420" text-anchor="middle" font-size="28" fill="var(--primary)" font-weight="800">路程 s = 100 km</text>
+            </g>
+
+            <!-- 汽车 -->
+            <g id="s2-car" transform="translate(400, 380)">
+              <rect x="0" y="40" width="220" height="60" rx="12" fill="var(--primary)"/>
+              <rect x="35" y="0" width="150" height="50" rx="8" fill="var(--accent)"/>
+              <rect x="50" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--accent))"/>
+              <rect x="115" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--accent))"/>
+              <circle cx="55" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="55" cy="105" r="13" fill="var(--neutral)"/>
+              <circle cx="175" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="175" cy="105" r="13" fill="var(--neutral)"/>
+              <!-- 速度线 -->
+              <line x1="-30" y1="70" x2="-80" y2="70" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+              <line x1="-20" y1="55" x2="-60" y2="55" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="-25" y1="85" x2="-70" y2="85" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+
+            <!-- 公式悬浮卡 -->
+            <g id="s2-formula-card" transform="translate(310, 120)">
+              <rect x="0" y="0" width="280" height="100" rx="14" fill="#fff" stroke="var(--primary)" stroke-width="3" filter="url(#shadow1)"/>
+              <text x="140" y="65" text-anchor="middle" font-size="42" font-weight="900" fill="var(--primary)" font-family="Songti SC">v = s / t</text>
+            </g>
+            <defs>
+              <filter id="shadow1" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.15"/>
+              </filter>
+            </defs>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s2-card1">
+            <div class="card-title">速度定义</div>
+            <div class="card-body">
+              <p>表示物体运动的<strong style="color:var(--primary)">快慢</strong></p>
+              <p>单位时间内通过的路程</p>
+              <p class="formula">v = s / t</p>
+            </div>
+          </div>
+          <div class="info-card" id="s2-card2">
+            <div class="card-title">单位</div>
+            <div class="card-body">
+              <p>米每秒：<strong style="color:var(--primary)">m/s</strong></p>
+              <p>千米每小时：<strong style="color:var(--primary)">km/h</strong></p>
+              <p>换算：1 m/s = 3.6 km/h</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 3: 什么是加速度 ============ -->
+    <div id="s3" class="scene">
+      <div class="ghost" data-layout-ignore>02</div>
+      <div class="section-chip"><span class="num">2</span><span class="label">什么是加速度</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s3-diagram">
+          <svg viewBox="0 0 900 700" style="width: 100%; height: 100%; overflow: visible;">
+            <!-- 速度变化序列：三辆车，从小到大的速度线 -->
+            <!-- 路面 -->
+            <rect x="0" y="520" width="900" height="180" fill="color-mix(in srgb, var(--neutral) 15%, transparent)"/>
+            <line x1="0" y1="545" x2="900" y2="545" stroke="#fff" stroke-width="3" stroke-dasharray="40 30"/>
+
+            <!-- 第一阶段：起步 (慢) -->
+            <g id="s3-car1" transform="translate(60, 420) scale(0.7)">
+              <rect x="0" y="40" width="220" height="60" rx="12" fill="var(--accent)"/>
+              <rect x="35" y="0" width="150" height="50" rx="8" fill="var(--highlight)"/>
+              <rect x="50" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--highlight))"/>
+              <rect x="115" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--highlight))"/>
+              <circle cx="55" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="55" cy="105" r="13" fill="var(--neutral)"/>
+              <circle cx="175" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="175" cy="105" r="13" fill="var(--neutral)"/>
+              <line x1="-10" y1="70" x2="-30" y2="70" stroke="var(--primary)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <text x="137" y="390" text-anchor="middle" font-size="24" fill="var(--accent)" font-weight="700">v = 0</text>
+            <text x="137" y="420" text-anchor="middle" font-size="20" fill="var(--neutral)">t = 0s</text>
+
+            <!-- 箭头 -->
+            <g id="s3-arrow1">
+              <path d="M 230 490 L 310 490" stroke="var(--neutral)" stroke-width="3" fill="none" stroke-dasharray="6 4"/>
+              <polygon points="310,490 298,482 298,498" fill="var(--neutral)"/>
+            </g>
+
+            <!-- 第二阶段：加速中 -->
+            <g id="s3-car2" transform="translate(350, 420) scale(0.8)">
+              <rect x="0" y="40" width="220" height="60" rx="12" fill="var(--accent)"/>
+              <rect x="35" y="0" width="150" height="50" rx="8" fill="var(--highlight)"/>
+              <rect x="50" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--highlight))"/>
+              <rect x="115" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--highlight))"/>
+              <circle cx="55" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="55" cy="105" r="13" fill="var(--neutral)"/>
+              <circle cx="175" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="175" cy="105" r="13" fill="var(--neutral)"/>
+              <line x1="-15" y1="65" x2="-50" y2="65" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/>
+              <line x1="-10" y1="80" x2="-40" y2="80" stroke="var(--primary)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <text x="438" y="380" text-anchor="middle" font-size="24" fill="var(--accent)" font-weight="700">v = 50 km/h</text>
+            <text x="438" y="410" text-anchor="middle" font-size="20" fill="var(--neutral)">t = 5s</text>
+
+            <!-- 箭头 -->
+            <g id="s3-arrow2">
+              <path d="M 560 490 L 640 490" stroke="var(--neutral)" stroke-width="3" fill="none" stroke-dasharray="6 4"/>
+              <polygon points="640,490 628,482 628,498" fill="var(--neutral)"/>
+            </g>
+
+            <!-- 第三阶段：高速 -->
+            <g id="s3-car3" transform="translate(680, 420)">
+              <rect x="0" y="40" width="220" height="60" rx="12" fill="var(--primary)"/>
+              <rect x="35" y="0" width="150" height="50" rx="8" fill="var(--accent)"/>
+              <rect x="50" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--accent))"/>
+              <rect x="115" y="10" width="55" height="30" rx="4" fill="color-mix(in srgb, #fff 75%, var(--accent))"/>
+              <circle cx="55" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="55" cy="105" r="13" fill="var(--neutral)"/>
+              <circle cx="175" cy="105" r="26" fill="var(--ink)"/>
+              <circle cx="175" cy="105" r="13" fill="var(--neutral)"/>
+              <line x1="-25" y1="60" x2="-80" y2="60" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+              <line x1="-20" y1="75" x2="-70" y2="75" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+              <line x1="-25" y1="90" x2="-60" y2="90" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <text x="790" y="370" text-anchor="middle" font-size="24" fill="var(--primary)" font-weight="700">v = 100 km/h</text>
+            <text x="790" y="400" text-anchor="middle" font-size="20" fill="var(--neutral)">t = 10s</text>
+
+            <!-- 加速度公式卡 -->
+            <g id="s3-formula-card" transform="translate(310, 100)">
+              <rect x="0" y="0" width="280" height="120" rx="14" fill="#fff" stroke="var(--accent)" stroke-width="3" filter="url(#shadow2)"/>
+              <text x="140" y="50" text-anchor="middle" font-size="20" fill="var(--neutral)" font-weight="700" letter-spacing="3">加速度</text>
+              <text x="140" y="95" text-anchor="middle" font-size="38" font-weight="900" fill="var(--accent)" font-family="Songti SC">a = Δv / Δt</text>
+            </g>
+            <defs>
+              <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.15"/>
+              </filter>
+            </defs>
+
+            <!-- Δv 标注 -->
+            <g id="s3-delta-v" transform="translate(680, 250)">
+              <path d="M 0 0 L 110 0 L 110 80" stroke="var(--primary)" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+              <text x="120" y="50" font-size="22" fill="var(--primary)" font-weight="700">Δv = 100 km/h</text>
+            </g>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card accent" id="s3-card1">
+            <div class="card-title">加速度定义</div>
+            <div class="card-body">
+              <p>表示速度<strong style="color:var(--accent)">变化</strong>的快慢</p>
+              <p>单位时间内速度的变化量</p>
+              <p class="formula" style="color: var(--accent);">a = Δv / Δt</p>
+            </div>
+          </div>
+          <div class="info-card" id="s3-card2">
+            <div class="card-title">单位</div>
+            <div class="card-body">
+              <p>米每二次方秒：<strong style="color:var(--primary)">m/s²</strong></p>
+              <p>加速度越大，速度变化越快</p>
+              <p>匀速运动加速度为零</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 4: 核心区别 ============ -->
+    <div id="s4" class="scene">
+      <div class="ghost" data-layout-ignore>03</div>
+      <div class="section-chip"><span class="num">3</span><span class="label">核心区别</span></div>
+
+      <div class="scene-content" style="gap: 40px;">
+        <!-- 左侧：速度 -->
+        <div class="compare-side">
+          <div style="font-size: 42px; font-weight: 800; color: var(--primary);">速度 v</div>
+          <div style="font-size: 28px; color: var(--neutral);">跑得多快</div>
+          <div style="height: 300px; width: 100%;">
+            <svg viewBox="0 0 500 300" style="width: 100%; height: 100%; overflow: visible;">
+              <!-- 飞机匀速飞行 -->
+              <g id="s4-plane" transform="translate(100, 100)">
+                <!-- 机身 -->
+                <ellipse cx="150" cy="50" rx="120" ry="25" fill="var(--primary)"/>
+                <!-- 驾驶舱 -->
+                <ellipse cx="240" cy="45" rx="30" ry="18" fill="color-mix(in srgb, #fff 60%, var(--primary))"/>
+                <!-- 机翼 -->
+                <path d="M 100 50 L 60 0 L 140 50 Z" fill="var(--accent)"/>
+                <path d="M 100 50 L 60 100 L 140 50 Z" fill="var(--accent)"/>
+                <!-- 尾翼 -->
+                <path d="M 30 50 L 0 20 L 10 50 Z" fill="var(--primary)"/>
+                <!-- 速度线 -->
+                <g stroke="var(--accent)" stroke-linecap="round">
+                  <line x1="-40" y1="35" x2="-100" y2="35" stroke-width="3"/>
+                  <line x1="-30" y1="55" x2="-85" y2="55" stroke-width="2"/>
+                  <line x1="-35" y1="70" x2="-75" y2="70" stroke-width="2"/>
+                </g>
+              </g>
+              <text x="250" y="240" text-anchor="middle" font-size="26" fill="var(--primary)" font-weight="700">
+                速度：900 km/h <tspan fill="var(--neutral)" font-size="20">（很大）</tspan>
+              </text>
+              <text x="250" y="275" text-anchor="middle" font-size="24" fill="var(--neutral)" font-weight="700">
+                加速度：<tspan fill="var(--primary)" font-size="28" font-weight="900">0</tspan>
+              </text>
+            </svg>
+          </div>
+          <div class="info-card">
+            <div class="card-title">例子：匀速飞行的飞机</div>
+            <div class="card-body">
+              <p>速度很大，飞得很快</p>
+              <p>但速度<strong style="color:var(--primary)">不变</strong></p>
+              <p>所以加速度 = 0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VS 徽章 -->
+        <div class="vs-badge">VS</div>
+
+        <!-- 右侧：加速度 -->
+        <div class="compare-side right">
+          <div style="font-size: 42px; font-weight: 800; color: var(--accent); text-align: right;">加速度 a</div>
+          <div style="font-size: 28px; color: var(--neutral); text-align: right;">变得多快</div>
+          <div style="height: 300px; width: 100%;">
+            <svg viewBox="0 0 500 300" style="width: 100%; height: 100%; overflow: visible;">
+              <!-- 火箭起飞 -->
+              <g id="s4-rocket" transform="translate(200, 30)">
+                <!-- 火箭身 -->
+                <path d="M 50 0 L 50 150 L 30 200 L 70 200 Z" fill="var(--accent)"/>
+                <!-- 火箭头 -->
+                <path d="M 50 0 L 30 50 L 70 50 Z" fill="var(--primary)"/>
+                <!-- 窗户 -->
+                <circle cx="50" cy="80" r="12" fill="color-mix(in srgb, #fff 70%, var(--accent))" stroke="var(--primary)" stroke-width="2"/>
+                <!-- 尾翼 -->
+                <path d="M 50 150 L 20 180 L 30 200 L 50 180 Z" fill="var(--primary)"/>
+                <path d="M 50 150 L 80 180 L 70 200 L 50 180 Z" fill="var(--primary)"/>
+                <!-- 火焰 -->
+                <g id="s4-flame">
+                  <path d="M 35 200 Q 50 260 65 200 Z" fill="#FFD166"/>
+                  <path d="M 40 200 Q 50 245 60 200 Z" fill="var(--primary)"/>
+                </g>
+              </g>
+              <text x="250" y="240" text-anchor="middle" font-size="26" fill="var(--accent)" font-weight="700">
+                加速度：<tspan fill="var(--primary)" font-size="28" font-weight="900">很大</tspan>
+              </text>
+              <text x="250" y="275" text-anchor="middle" font-size="24" fill="var(--neutral)" font-weight="700">
+                起步时速度：<tspan fill="var(--accent)">接近 0</tspan>
+              </text>
+            </svg>
+          </div>
+          <div class="info-card accent">
+            <div class="card-title">例子：火箭起飞瞬间</div>
+            <div class="card-body">
+              <p>加速度很大，速度变化快</p>
+              <p>但速度还<strong style="color:var(--accent)">很小</strong></p>
+              <p>刚起步嘛</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 5: 生活例子 ============ -->
+    <div id="s5" class="scene">
+      <div class="ghost" data-layout-ignore>04</div>
+      <div class="section-chip"><span class="num">4</span><span class="label">生活例子</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s5-diagram">
+          <svg viewBox="0 0 900 700" style="width: 100%; height: 100%; overflow: visible;">
+            <!-- 上下两个场景：起步 + 匀速 -->
+            <!-- 分割线 -->
+            <line x1="50" y1="350" x2="850" y2="350" stroke="var(--line)" stroke-width="2" stroke-dasharray="8 6"/>
+            <text x="450" y="355" text-anchor="middle" font-size="22" fill="var(--neutral)" font-weight="700">— 两种状态对比 —</text>
+
+            <!-- 上半部分：跑车起步 -->
+            <g id="s5-start">
+              <text x="80" y="80" font-size="30" fill="var(--primary)" font-weight="800">① 跑车起步</text>
+              <!-- 起跑线 -->
+              <rect x="50" y="280" width="800" height="40" fill="color-mix(in srgb, var(--neutral) 12%, transparent)"/>
+              <line x1="50" y1="270" x2="850" y2="270" stroke="var(--ink)" stroke-width="3" opacity="0.6"/>
+              <!-- 起跑线格子 -->
+              <g transform="translate(100, 270)">
+                <rect width="20" height="40" fill="var(--ink)" opacity="0.7"/>
+                <rect x="20" width="20" height="40" fill="#fff"/>
+                <rect x="40" width="20" height="40" fill="var(--ink)" opacity="0.7"/>
+                <rect x="60" width="20" height="40" fill="#fff"/>
+              </g>
+              <!-- 起步的跑车 -->
+              <g id="s5-sportscar" transform="translate(200, 170)">
+                <rect x="0" y="50" width="280" height="55" rx="14" fill="var(--primary)"/>
+                <path d="M 30 50 L 70 0 L 210 0 L 250 50 Z" fill="var(--accent)"/>
+                <rect x="80" y="10" width="50" height="40" rx="4" fill="color-mix(in srgb, #fff 70%, var(--accent))"/>
+                <rect x="150" y="10" width="50" height="40" rx="4" fill="color-mix(in srgb, #fff 70%, var(--accent))"/>
+                <circle cx="60" cy="105" r="28" fill="var(--ink)"/>
+                <circle cx="60" cy="105" r="14" fill="var(--neutral)"/>
+                <circle cx="220" cy="105" r="28" fill="var(--ink)"/>
+                <circle cx="220" cy="105" r="14" fill="var(--neutral)"/>
+                <!-- 加速火焰/尾气 -->
+                <g id="s5-exhaust">
+                  <ellipse cx="-15" cy="75" rx="25" ry="12" fill="#FFD166" opacity="0.8"/>
+                  <ellipse cx="-10" cy="75" rx="15" ry="8" fill="var(--primary)" opacity="0.9"/>
+                </g>
+              </g>
+              <!-- 速度表（小） -->
+              <g transform="translate(650, 130)">
+                <circle cx="0" cy="0" r="50" fill="#fff" stroke="var(--primary)" stroke-width="4"/>
+                <g stroke="var(--neutral)" stroke-width="2">
+                  <line x1="0" y1="-40" x2="0" y2="-32"/>
+                  <line x1="-35" y1="-20" x2="-28" y2="-16"/>
+                  <line x1="-40" y1="0" x2="-32" y2="0"/>
+                  <line x1="35" y1="-20" x2="28" y2="-16"/>
+                </g>
+                <line x1="0" y1="5" x2="-15" y2="-25" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="6" fill="var(--primary)"/>
+                <text x="0" y="30" text-anchor="middle" font-size="12" fill="var(--neutral)">km/h</text>
+              </g>
+              <text x="650" y="220" text-anchor="middle" font-size="24" fill="var(--primary)" font-weight="700">
+                a 大 · v 小
+              </text>
+            </g>
+
+            <!-- 下半部分：高铁匀速 -->
+            <g id="s5-cruise">
+              <text x="80" y="420" font-size="30" fill="var(--accent)" font-weight="800">② 高铁匀速行驶</text>
+              <!-- 轨道 -->
+              <rect x="50" y="600" width="800" height="30" fill="color-mix(in srgb, var(--neutral) 15%, transparent)"/>
+              <line x1="50" y1="595" x2="850" y2="595" stroke="var(--ink)" stroke-width="2"/>
+              <!-- 枕木 -->
+              <g stroke="var(--neutral)" stroke-width="3">
+                <line x1="100" y1="590" x2="100" y2="625"/>
+                <line x1="200" y1="590" x2="200" y2="625"/>
+                <line x1="300" y1="590" x2="300" y2="625"/>
+                <line x1="400" y1="590" x2="400" y2="625"/>
+                <line x1="500" y1="590" x2="500" y2="625"/>
+                <line x1="600" y1="590" x2="600" y2="625"/>
+                <line x1="700" y1="590" x2="700" y2="625"/>
+                <line x1="800" y1="590" x2="800" y2="625"/>
+              </g>
+              <!-- 高铁 -->
+              <g id="s5-train" transform="translate(150, 470)">
+                <!-- 车身 -->
+                <rect x="0" y="20" width="560" height="80" rx="10" fill="var(--accent)"/>
+                <!-- 车头 -->
+                <path d="M 560 20 Q 620 20 620 60 L 620 60 Q 620 100 560 100 Z" fill="var(--primary)"/>
+                <!-- 窗户 -->
+                <g fill="color-mix(in srgb, #fff 70%, var(--accent))">
+                  <rect x="30" y="35" width="50" height="35" rx="4"/>
+                  <rect x="100" y="35" width="50" height="35" rx="4"/>
+                  <rect x="170" y="35" width="50" height="35" rx="4"/>
+                  <rect x="240" y="35" width="50" height="35" rx="4"/>
+                  <rect x="310" y="35" width="50" height="35" rx="4"/>
+                  <rect x="380" y="35" width="50" height="35" rx="4"/>
+                  <rect x="450" y="35" width="50" height="35" rx="4"/>
+                </g>
+                <!-- 车门 -->
+                <rect x="520" y="30" width="30" height="70" rx="4" fill="var(--primary)"/>
+                <!-- 轮子 -->
+                <g fill="var(--ink)">
+                  <circle cx="80" cy="105" r="14"/>
+                  <circle cx="180" cy="105" r="14"/>
+                  <circle cx="280" cy="105" r="14"/>
+                  <circle cx="380" cy="105" r="14"/>
+                  <circle cx="480" cy="105" r="14"/>
+                </g>
+                <!-- 速度线 -->
+                <g stroke="var(--primary)" stroke-linecap="round">
+                  <line x1="-20" y1="40" x2="-70" y2="40" stroke-width="3"/>
+                  <line x1="-15" y1="60" x2="-60" y2="60" stroke-width="2"/>
+                  <line x1="-20" y1="80" x2="-50" y2="80" stroke-width="2"/>
+                </g>
+              </g>
+              <!-- 速度表（大） -->
+              <g transform="translate(720, 490)">
+                <circle cx="0" cy="0" r="50" fill="#fff" stroke="var(--accent)" stroke-width="4"/>
+                <g stroke="var(--neutral)" stroke-width="2">
+                  <line x1="0" y1="-40" x2="0" y2="-32"/>
+                  <line x1="-35" y1="-20" x2="-28" y2="-16"/>
+                  <line x1="-40" y1="0" x2="-32" y2="0"/>
+                  <line x1="35" y1="-20" x2="28" y2="-16"/>
+                  <line x1="40" y1="0" x2="32" y2="0"/>
+                </g>
+                <line x1="0" y1="5" x2="30" y2="-20" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="6" fill="var(--accent)"/>
+                <text x="0" y="30" text-anchor="middle" font-size="12" fill="var(--neutral)">km/h</text>
+              </g>
+              <text x="720" y="580" text-anchor="middle" font-size="24" fill="var(--accent)" font-weight="700">
+                v 大 · a = 0
+              </text>
+            </g>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s5-card1">
+            <div class="card-title">记住两句话</div>
+            <div class="card-body">
+              <p><strong style="color:var(--primary)">速度大</strong> ≠ 加速度大</p>
+              <p><strong style="color:var(--accent)">加速度大</strong> ≠ 速度大</p>
+              <p>两者说的根本不是一回事</p>
+            </div>
+          </div>
+          <div class="info-card accent" id="s5-card2">
+            <div class="card-title">一句话区分</div>
+            <div class="card-body">
+              <p><strong style="color:var(--primary)">速度</strong>：跑得多快</p>
+              <p><strong style="color:var(--accent)">加速度</strong>：变得多快</p>
+              <p>一个是"快不快"，一个是"变不变"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 6: 小测验 ============ -->
+    <div id="s6" class="scene">
+      <div class="ghost" data-layout-ignore>05</div>
+      <div class="section-chip"><span class="num">5</span><span class="label">小测验</span></div>
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 32px;">
+        <div id="s6-question" style="
+          font-size: 42px; font-weight: 800; color: var(--ink);
+          text-align: center; padding: 20px 60px;
+        ">
+          一辆车速度很大，加速度一定很大吗？
+        </div>
+
+        <div id="s6-options" style="
+          display: grid; grid-template-columns: 1fr 1fr;
+          gap: 24px; width: 100%; max-width: 900px; margin: 0 auto;
+        ">
+          <div class="quiz-option" id="s6-optA">
+            <span class="opt-label">A</span>
+            对，速度大加速度肯定大
+          </div>
+          <div class="quiz-option correct" id="s6-optB">
+            <span class="opt-label">B</span>
+            不一定，要看速度变不变
+          </div>
+          <div class="quiz-option" id="s6-optC">
+            <span class="opt-label">C</span>
+            速度和加速度成正比
+          </div>
+          <div class="quiz-option" id="s6-optD">
+            <span class="opt-label">D</span>
+            速度越大加速度越小
+          </div>
+        </div>
+
+        <div id="s6-answer" class="quiz-answer">
+          <div class="check">✓</div>
+          <div>
+            <div style="font-size: 30px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">
+              正确答案：B. 不一定
+            </div>
+            <div style="font-size: 26px; color: var(--ink); line-height: 1.6;">
+              匀速行驶的汽车，速度再大，加速度也是零。
+              加速度是速度变化的快慢，跟速度本身多大没关系。
+              只要速度不变，不管多快，加速度都是零。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 7: 总结 ============ -->
+    <div id="s7" class="scene">
+      <div class="ghost" data-layout-ignore>06</div>
+      <div class="section-chip"><span class="num">6</span><span class="label">总结</span></div>
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 28px;">
+        <!-- 双公式 -->
+        <div class="dual-formula" id="s7-formulas">
+          <div class="formula-block primary">
+            <div class="big" id="s7-f1">v = s / t</div>
+            <div class="desc">速 度 · 运动快慢</div>
+          </div>
+          <div class="formula-divider">|</div>
+          <div class="formula-block accent">
+            <div class="big" id="s7-f2">a = Δv / Δt</div>
+            <div class="desc">加速度 · 变化快慢</div>
+          </div>
+        </div>
+
+        <div class="info-card" id="s7-card" style="width: 1060px; flex: none;">
+          <div class="card-title">本章小结</div>
+          <div class="card-body">
+            <p><strong style="color:var(--primary)">速度</strong>表示运动的快慢，等于路程除以时间</p>
+            <p><strong style="color:var(--accent)">加速度</strong>表示速度变化的快慢，等于速度变化量除以时间</p>
+            <p>速度大 ≠ 加速度大，匀速运动速度再大加速度也是零</p>
+            <p>一个说"快不快"，一个说"变不变"，别再搞混啦！</p>
+          </div>
+        </div>
+
+        <div class="summary-bar" id="s7-bar">
+          <div class="badge"><div class="icon">v</div><div class="name">速度</div></div>
+          <div class="badge"><div class="icon">a</div><div class="name">加速度</div></div>
+          <div class="badge"><div class="icon">s</div><div class="name">路程</div></div>
+          <div class="badge"><div class="icon">t</div><div class="name">时间</div></div>
+          <div class="badge"><div class="icon">Δ</div><div class="name">变化量</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 常驻层 ============ -->
+    <div id="chapter">高一物理·运动学</div>
+    <div id="subtitle-layer"></div>
+
+    <!-- ============ 旁白音频 ============ -->
+    <audio id="a1" src="audio/seg-01.mp3" data-start="0.6" data-duration="13.5" data-track-index="2"></audio>
+    <audio id="a2" src="audio/seg-02.mp3" data-start="15.6" data-duration="12.5" data-track-index="2"></audio>
+    <audio id="a3" src="audio/seg-03.mp3" data-start="29.6" data-duration="11.5" data-track-index="2"></audio>
+    <audio id="a4" src="audio/seg-04.mp3" data-start="42.6" data-duration="12.25" data-track-index="2"></audio>
+    <audio id="a5" src="audio/seg-05.mp3" data-start="56.35" data-duration="12.0" data-track-index="2"></audio>
+    <audio id="a6" src="audio/seg-06.mp3" data-start="69.85" data-duration="11.75" data-track-index="2"></audio>
+    <audio id="a7" src="audio/seg-07.mp3" data-start="83.1" data-duration="14.5" data-track-index="2"></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    /* ==== 输出模式: video / silent ==== */
+    const MODE = (window.__hyperframes && window.__hyperframes.getVariables
+      ? window.__hyperframes.getVariables().mode : null) || "video";
+    const SILENT_SEG = 4.6;
+
+    const SEGMENTS_VIDEO = [
+      { sel: "#s1", start: 0.0, duration: 15.0, transition: "blur-crossfade",
+        subtitle: "同学们，你是不是经常把速度和加速度搞混？很多人以为速度大加速度就大，但其实完全不是一回事。今天我们一次搞懂。" },
+      { sel: "#s2", start: 15.0, duration: 14.0, transition: "blur-crossfade",
+        subtitle: "先看速度。速度表示运动的快慢，等于路程除以时间。一辆车一小时跑一百公里，它的速度就是一百千米每小时。" },
+      { sel: "#s3", start: 29.0, duration: 13.0, transition: "blur-crossfade",
+        subtitle: "那加速度呢？加速度是速度变化的快慢。汽车从静止加速到一百公里用了十秒，这就是加速度在起作用。" },
+      { sel: "#s4", start: 42.0, duration: 13.75, transition: "blur-crossfade",
+        subtitle: "一句话区分：速度是跑得多快，加速度是变得多快。匀速飞行的飞机速度很大，但加速度是零，因为速度没变。" },
+      { sel: "#s5", start: 55.75, duration: 13.5, transition: "blur-crossfade",
+        subtitle: "再举个例子：跑车起步时加速度大，速度从零快速增加；但跑起来之后匀速行驶，速度很大，加速度却是零。" },
+      { sel: "#s6", start: 69.25, duration: 13.25, transition: "push-up",
+        subtitle: "来做道题：一辆车速度很大，加速度一定很大吗？答案是不一定。匀速运动的车速度再大，加速度也是零。" },
+      { sel: "#s7", start: 82.5, duration: 16.0, transition: "blur-crossfade",
+        subtitle: "最后记住：速度 v 等于 s 除以 t，表示运动快慢；加速度 a 等于Δv 除以Δt，表示速度变化快慢。别再搞混啦！" },
+    ];
+
+    let _acc = 0;
+    const SEGMENTS = MODE === "silent"
+      ? SEGMENTS_VIDEO.map((s) => { const o = { ...s, start: _acc, duration: SILENT_SEG }; _acc += SILENT_SEG; return o; })
+      : SEGMENTS_VIDEO;
+
+    /* ==== 波形 helper ==== */
+    function makeWaves() {
+      document.querySelectorAll("[data-wave]").forEach((el) => {
+        const cfg = JSON.parse(el.getAttribute("data-wave"));
+        const lambda = cfg.len / cfg.cycles;
+        const cycles = cfg.flow ? cfg.cycles + 1 : cfg.cycles;
+        const len = cfg.flow ? cfg.len + lambda : cfg.len;
+        const n = Math.round((cfg.samples || 160) * (cycles / cfg.cycles));
+        const pts = [];
+        for (let i = 0; i <= n; i++) {
+          const x = (i / n) * len;
+          let y = Math.sin((2 * Math.PI * cycles * i) / n);
+          (cfg.harmonics || []).forEach(([mult, w]) => {
+            y += w * Math.sin((2 * Math.PI * cycles * mult * i) / n);
+          });
+          pts.push(`${(cfg.x0 + x).toFixed(1)},${(cfg.y0 - cfg.amp * y).toFixed(1)}`);
+        }
+        el.setAttribute("points", pts.join(" "));
+        el.dataset.lambda = lambda.toFixed(1);
+      });
+    }
+    makeWaves();
+    function drawIn(sel, t, dur, ease) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const len = Math.ceil(el.getTotalLength());
+        el.style.strokeDasharray = len;
+        tl.fromTo(el, { strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: dur, ease: ease || "power2.inOut" }, t);
+      });
+    }
+
+    /* ==== 每场景入场编排 ==== */
+
+    function scene1(t) {
+      tl.fromTo("#s1-title", { y: 70, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.2);
+      tl.fromTo("#s1-icon", { scale: 0.6, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.5)" }, t + 0.7);
+      tl.fromTo("#s1-pills .pill", { y: 34, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, ease: "power2.out", stagger: 0.09 }, t + 1.2);
+      tl.fromTo("#s1-tagline", { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "sine.out" }, t + 1.9);
+      // 指针摆动
+      tl.to("#needle", { rotation: 60, transformOrigin: "50% 100%",
+        duration: 1.2, ease: "power2.out" }, t + 1.5);
+      tl.to("#needle", { rotation: 30,
+        duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: -1 }, t + 2.7);
+    }
+
+    function scene2(t) {
+      // 公式卡弹入
+      tl.fromTo("#s2-formula-card", { scale: 0.5, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" }, t + 0.3);
+      // 路程线绘制
+      drawIn("#s2-path", t + 0.6, 0.8, "power2.out");
+      // 汽车从左驶入
+      tl.fromTo("#s2-car", { x: -150, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1.0, ease: "power3.out" }, t + 0.8);
+      // 时间线淡入
+      tl.fromTo("#s2-timeline", { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + 1.4);
+      // 卡片依次滑入
+      tl.fromTo("#s2-card1", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.0);
+      tl.fromTo("#s2-card2", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.5);
+      // 环境动效：汽车轻微浮动
+      tl.to("#s2-car", { y: -6, yoyo: true, repeat: -1,
+        duration: 1.5, ease: "sine.inOut" }, t + 2.0);
+    }
+
+    function scene3(t) {
+      // 公式卡弹入
+      tl.fromTo("#s3-formula-card", { scale: 0.5, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" }, t + 0.3);
+      // 三辆车依次出现
+      tl.fromTo("#s3-car1", { scale: 0, opacity: 0 },
+        { scale: 0.7, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, t + 0.5);
+      tl.fromTo("#s3-arrow1", { opacity: 0, scaleX: 0 },
+        { opacity: 1, scaleX: 1, duration: 0.3, ease: "power2.out" }, t + 0.9);
+      tl.fromTo("#s3-car2", { scale: 0, opacity: 0 },
+        { scale: 0.8, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, t + 1.1);
+      tl.fromTo("#s3-arrow2", { opacity: 0, scaleX: 0 },
+        { opacity: 1, scaleX: 1, duration: 0.3, ease: "power2.out" }, t + 1.5);
+      tl.fromTo("#s3-car3", { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, t + 1.7);
+      // Δv 标注
+      tl.fromTo("#s3-delta-v", { opacity: 0, x: 30 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, t + 2.2);
+      // 卡片依次滑入
+      tl.fromTo("#s3-card1", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.2);
+      tl.fromTo("#s3-card2", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.8);
+      // 环境动效：火焰跳动
+      tl.to("#s4-flame", { scaleY: 1.2, transformOrigin: "50% 0%",
+        yoyo: true, repeat: -1, duration: 0.3, ease: "sine.inOut" }, t + 2.5);
+    }
+
+    function scene4(t) {
+      // 左侧从左滑入
+      tl.fromTo("#s4 .compare-side:first-child", { x: -80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 0.2);
+      // 右侧从右滑入
+      tl.fromTo("#s4 .compare-side.right", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 0.4);
+      // VS 徽章弹出
+      tl.fromTo(".vs-badge", { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.8)" }, t + 0.9);
+      // 飞机螺旋桨/速度线微动
+      tl.to("#s4-plane", { x: -8, yoyo: true, repeat: -1,
+        duration: 1.2, ease: "sine.inOut" }, t + 1.2);
+      // 火焰跳动
+      tl.to("#s4-flame", { scaleY: 1.3, transformOrigin: "50% 0%",
+        yoyo: true, repeat: -1, duration: 0.25, ease: "sine.inOut" }, t + 1.2);
+    }
+
+    function scene5(t) {
+      // 上半部分淡入
+      tl.fromTo("#s5-start", { y: -30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 0.2);
+      // 跑车驶入
+      tl.fromTo("#s5-sportscar", { x: -200, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.5);
+      // 下半部分淡入
+      tl.fromTo("#s5-cruise", { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 0.9);
+      // 高铁驶入
+      tl.fromTo("#s5-train", { x: -300, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1.0, ease: "power2.out" }, t + 1.2);
+      // 卡片依次滑入
+      tl.fromTo("#s5-card1", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.0);
+      tl.fromTo("#s5-card2", { x: 80, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 1.6);
+      // 环境动效：尾气脉动
+      tl.to("#s5-exhaust", { scale: 1.2, x: -5, transformOrigin: "100% 50%",
+        yoyo: true, repeat: -1, duration: 0.4, ease: "sine.inOut" }, t + 2.0);
+    }
+
+    function scene6(t) {
+      // 问题从上方浮入
+      tl.fromTo("#s6-question", { y: -40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 0.2);
+      // 选项逐个弹出
+      tl.fromTo(".quiz-option", { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, stagger: 0.15, ease: "back.out(1.5)" }, t + 0.6);
+      // 停顿后正确答案高亮
+      tl.to("#s6-optB", {
+        borderColor: "var(--primary)",
+        scale: 1.03,
+        duration: 0.4,
+        ease: "back.out(1.5)"
+      }, t + 3.5);
+      tl.to("#s6-optB .opt-label", {
+        background: "var(--primary)",
+        duration: 0.3
+      }, t + 3.5);
+      // 错误选项淡化
+      tl.to("#s6-optA, #s6-optC, #s6-optD", {
+        opacity: 0.5,
+        duration: 0.4
+      }, t + 3.6);
+      // 答案解释从下滑入
+      tl.fromTo("#s6-answer", { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, t + 4.2);
+      // 环境动效：正确答案脉动
+      tl.to("#s6-optB", { scale: 1.05, yoyo: true, repeat: -1,
+        duration: 1.2, ease: "sine.inOut" }, t + 5.0);
+    }
+
+    function scene7(t) {
+      // 两个公式分别弹入
+      tl.fromTo("#s7-f1", { scale: 0.4, opacity: 0, x: -30 },
+        { scale: 1, opacity: 1, x: 0, duration: 0.7, ease: "back.out(1.5)" }, t + 0.3);
+      tl.fromTo(".formula-divider", { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }, t + 0.7);
+      tl.fromTo("#s7-f2", { scale: 0.4, opacity: 0, x: 30 },
+        { scale: 1, opacity: 1, x: 0, duration: 0.7, ease: "back.out(1.5)" }, t + 0.6);
+      // 卡片从下滑入
+      tl.fromTo("#s7-card", { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 1.4);
+      // 徽章逐个弹入
+      tl.fromTo("#s7-bar .badge", { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, t + 2.2);
+      // 公式呼吸
+      tl.to("#s7-f1", { scale: 1.04, yoyo: true, repeat: -1,
+        duration: 2.0, ease: "sine.inOut" }, t + 1.4);
+      tl.to("#s7-f2", { scale: 1.04, yoyo: true, repeat: -1,
+        duration: 2.2, ease: "sine.inOut" }, t + 1.6);
+      // 收尾淡出
+      if (MODE !== "silent") {
+        const end = t + SEGMENTS[6].duration;
+        tl.to("#s7 .scene-content, #s7 .section-chip, #chapter",
+          { opacity: 0, duration: 0.6, ease: "power1.in" }, end - 0.7);
+      }
+    }
+
+    const SCENE_BUILDERS = [scene1, scene2, scene3, scene4, scene5, scene6, scene7];
+
+    /* ================================================================
+       通用引擎
+       ================================================================ */
+    // 字幕
+    const subLayer = document.getElementById("subtitle-layer");
+    if (MODE !== "silent") SEGMENTS.forEach((seg, i) => {
+      const div = document.createElement("div");
+      div.className = "subtitle";
+      div.id = "sub-" + (i + 1);
+      div.textContent = seg.subtitle;
+      subLayer.appendChild(div);
+      const tIn = seg.start + (i === 0 ? 0.4 : 0.7);
+      const tOut = (i < SEGMENTS.length - 1
+        ? SEGMENTS[i + 1].start : seg.start + seg.duration) - 0.25;
+      tl.fromTo("#sub-" + (i + 1), { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, tIn);
+      tl.to("#sub-" + (i + 1), { opacity: 0, duration: 0.25, ease: "power1.in" }, tOut);
+      tl.set("#sub-" + (i + 1), { visibility: "hidden" }, tOut + 0.3);
+    });
+
+    // 转场
+    for (let i = 1; i < SEGMENTS.length; i++) {
+      const prev = SEGMENTS[i - 1], cur = SEGMENTS[i];
+      const T = cur.start;
+      if (prev.transition === "push-up") {
+        tl.to(prev.sel, { y: -1080, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.fromTo(cur.sel, { y: 1080, opacity: 1 },
+          { y: 0, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.set(prev.sel, { opacity: 0, visibility: "hidden", y: 0 }, T + 0.55);
+      } else {
+        tl.to(prev.sel, { filter: "blur(10px)", scale: 1.03, opacity: 0, duration: 0.5, ease: "power2.inOut" }, T);
+        tl.fromTo(cur.sel, { filter: "blur(10px)", scale: 0.97, opacity: 0 },
+          { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, T + 0.1);
+        tl.set(prev.sel, { visibility: "hidden" }, T + 0.65);
+      }
+    }
+
+    // 场景内容编排
+    SCENE_BUILDERS.forEach((fn, i) => fn(SEGMENTS[i].start));
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

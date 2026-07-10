@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, initial-scale=1.0">
+<title>三种物态变化 · 纳川图解</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+  /* ============================================================
+     纳川图解 · 三卡片型模板
+     画布尺寸：1080 x 1920
+     配色方案：莫兰迪三色渐变（蓝/绿/橙）
+     ============================================================ */
+
+  :root {
+    /* 三色系：固态(蓝) / 液态(绿) / 气态(橙) */
+    --color-card1: #6B8E9F;
+    --color-card1-light: #A8C0CC;
+    --color-card1-bg: #E8F0F3;
+
+    --color-card2: #7C9B7C;
+    --color-card2-light: #A8C0A8;
+    --color-card2-bg: #E6EDE6;
+
+    --color-card3: #C4A484;
+    --color-card3-light: #E0C9A6;
+    --color-card3-bg: #F5EDE0;
+
+    /* 中性色 */
+    --color-text: #2D3436;
+    --color-text-secondary: #636E72;
+    --color-text-light: #95A5A6;
+    --color-bg: #F8F9FA;
+    --color-card: #FFFFFF;
+    --color-border: #DFE6E9;
+
+    /* 字体 */
+    --font-title: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    --font-body: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    --font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+
+    /* 间距 */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+
+    /* 圆角 */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    /* 阴影 */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .canvas {
+    width: 1080px;
+    height: 1920px;
+    background: linear-gradient(180deg, #F0F4F5 0%, var(--color-bg) 15%, var(--color-bg) 100%);
+    position: relative;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============================================================
+     标题区
+     ============================================================ */
+  .header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+  }
+
+  .subject-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--color-card1) 0%, var(--color-card3) 100%);
+    color: white;
+    padding: 8px 24px;
+    border-radius: 100px;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    margin-bottom: var(--space-md);
+  }
+
+  .main-title {
+    font-family: var(--font-title);
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    margin-bottom: var(--space-sm);
+    letter-spacing: 2px;
+  }
+
+  .main-title .c1 { color: var(--color-card1); }
+  .main-title .c2 { color: var(--color-card2); }
+  .main-title .c3 { color: var(--color-card3); }
+
+  .subtitle {
+    font-size: 26px;
+    color: var(--color-text-secondary);
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  /* ============================================================
+     三卡片区域
+     ============================================================ */
+  .cards-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: var(--space-lg);
+  }
+
+  .info-card {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-header {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .info-card:nth-child(1) .card-header {
+    background: linear-gradient(135deg, var(--color-card1) 0%, #4A6B7A 100%);
+  }
+  .info-card:nth-child(2) .card-header {
+    background: linear-gradient(135deg, var(--color-card2) 0%, #5D7A5D 100%);
+  }
+  .info-card:nth-child(3) .card-header {
+    background: linear-gradient(135deg, var(--color-card3) 0%, #A08060 100%);
+  }
+
+  .card-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .card-title-wrap {
+    flex: 1;
+  }
+
+  .card-title {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+
+  .card-subtitle {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+  }
+
+  /* 卡片内容区 */
+  .card-body {
+    padding: 20px 28px;
+    display: flex;
+    gap: 24px;
+    flex: 1;
+  }
+
+  .card-visual {
+    width: 200px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-visual svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .info-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .info-label {
+    flex-shrink: 0;
+    font-size: 18px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .info-card:nth-child(1) .info-label {
+    background: var(--color-card1-bg);
+    color: var(--color-card1);
+  }
+  .info-card:nth-child(2) .info-label {
+    background: var(--color-card2-bg);
+    color: var(--color-card2);
+  }
+  .info-card:nth-child(3) .info-label {
+    background: var(--color-card3-bg);
+    color: var(--color-card3);
+  }
+
+  .info-text {
+    flex: 1;
+    font-size: 21px;
+    line-height: 1.5;
+    color: var(--color-text);
+    padding-top: 4px;
+  }
+
+  .info-text strong {
+    font-weight: 600;
+  }
+
+  /* 物态变化条件标签 */
+  .condition-tag {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .info-card:nth-child(1) .condition-tag {
+    background: var(--color-card1-bg);
+    color: var(--color-card1);
+  }
+  .info-card:nth-child(2) .condition-tag {
+    background: var(--color-card2-bg);
+    color: var(--color-card2);
+  }
+  .info-card:nth-child(3) .condition-tag {
+    background: var(--color-card3-bg);
+    color: var(--color-card3);
+  }
+
+  /* ============================================================
+     循环关系图
+     ============================================================ */
+  .cycle-section {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .section-label .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-card1), var(--color-card3));
+  }
+
+  .section-label .text {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .section-label .divider {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-border), transparent);
+    margin-left: 12px;
+  }
+
+  .cycle-diagram {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .cycle-diagram svg {
+    width: 100%;
+    height: 220px;
+  }
+
+  /* ============================================================
+     总结区
+     ============================================================ */
+  .summary-section {
+    margin-top: auto;
+  }
+
+  .summary-card {
+    background: linear-gradient(135deg, var(--color-card1) 0%, var(--color-card2) 50%, var(--color-card3) 100%);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    box-shadow: var(--shadow-lg);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .summary-label {
+    font-size: 22px;
+    letter-spacing: 4px;
+    opacity: 0.85;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .summary-text {
+    font-size: 26px;
+    line-height: 1.7;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+
+  .summary-text .kw {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .summary-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 18px;
+    opacity: 0.75;
+    position: relative;
+    z-index: 1;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="canvas">
+
+  <!-- ============================================================
+       标题区
+       ============================================================ -->
+  <div class="header">
+    <div class="subject-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <path d="M10 2v7.31"/>
+        <path d="M14 9.3V1.99"/>
+        <path d="M8.5 2h7"/>
+        <path d="M14 9.3a6.5 6.5 0 1 1-4 0"/>
+        <path d="M5.52 16h12.96"/>
+      </svg>
+      化 学
+    </div>
+    <h1 class="main-title">
+      <span class="c1">熔化</span> · <span class="c2">汽化</span> · <span class="c3">升华</span>
+    </h1>
+    <p class="subtitle">三种吸热物态变化 · 一张图全搞懂</p>
+  </div>
+
+  <!-- ============================================================
+       三卡片
+       ============================================================ -->
+  <div class="cards-section">
+
+    <!-- 卡片1：熔化 -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-number">1</div>
+        <div class="card-title-wrap">
+          <div class="card-title">熔 化</div>
+          <div class="card-subtitle">固态 → 液态</div>
+        </div>
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-visual">
+          <!-- 熔化示意图：冰块变成水滴 -->
+          <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+            <!-- 冰块 -->
+            <g transform="translate(15, 20)">
+              <polygon points="50,0 80,20 80,70 50,90 20,70 20,20" fill="#A8C0CC" stroke="#6B8E9F" stroke-width="2"/>
+              <polygon points="50,0 80,20 50,40 20,20" fill="#C8D8E0" stroke="#6B8E9F" stroke-width="1.5"/>
+              <line x1="50" y1="40" x2="50" y2="90" stroke="#6B8E9F" stroke-width="1.5" opacity="0.5"/>
+            </g>
+            <!-- 箭头 -->
+            <defs>
+              <marker id="arrow1" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#6B8E9F"/>
+              </marker>
+            </defs>
+            <line x1="110" y1="50" x2="140" y2="50" stroke="#6B8E9F" stroke-width="2.5" marker-end="url(#arrow1)"/>
+            <!-- 水滴 -->
+            <g transform="translate(155, 25)">
+              <path d="M20,0 Q40,35 40,55 A20,20 0 0 1 0,55 Q0,35 20,0z" fill="#A8C0CC" stroke="#6B8E9F" stroke-width="2"/>
+              <ellipse cx="14" cy="40" rx="6" ry="8" fill="white" opacity="0.4"/>
+            </g>
+            <text x="100" y="155" text-anchor="middle" font-size="14" fill="#6B8E9F" font-weight="500">吸热</text>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="info-row">
+            <span class="info-label">定义</span>
+            <div class="info-text">物质从<strong>固态</strong>变成<strong>液态</strong>的过程</div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">条件</span>
+            <div class="info-text">
+              <span class="condition-tag">吸热</span> &nbsp;温度达到熔点（晶体）
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">实例</span>
+            <div class="info-text">冰化成水、铁块熔成铁水、蜡烛熔化</div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">特点</span>
+            <div class="info-text">晶体熔化时温度<strong>不变</strong>（有固定熔点），非晶体没有固定熔点</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 卡片2：汽化 -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-number">2</div>
+        <div class="card-title-wrap">
+          <div class="card-title">汽 化</div>
+          <div class="card-subtitle">液态 → 气态</div>
+        </div>
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v20"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-visual">
+          <!-- 汽化示意图：水变成水蒸气 -->
+          <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+            <!-- 水杯 -->
+            <g transform="translate(10, 40)">
+              <path d="M10,10 L10,80 Q10,90 20,90 L60,90 Q70,90 70,80 L70,10"
+                    fill="none" stroke="#7C9B7C" stroke-width="2.5"/>
+              <!-- 水面 -->
+              <path d="M12,40 Q40,35 68,40 L68,80 Q68,88 60,88 L20,88 Q12,88 12,80 Z"
+                    fill="#A8C0A8" opacity="0.6"/>
+              <line x1="12" y1="40" x2="68" y2="40" stroke="#7C9B7C" stroke-width="2"/>
+            </g>
+            <!-- 箭头 -->
+            <defs>
+              <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#7C9B7C"/>
+              </marker>
+            </defs>
+            <line x1="110" y1="70" x2="140" y2="70" stroke="#7C9B7C" stroke-width="2.5" marker-end="url(#arrow2)"/>
+            <!-- 气体分子 -->
+            <g transform="translate(155, 30)">
+              <circle cx="20" cy="15" r="5" fill="#A8C0A8" stroke="#7C9B7C" stroke-width="1.5"/>
+              <circle cx="40" cy="30" r="5" fill="#A8C0A8" stroke="#7C9B7C" stroke-width="1.5"/>
+              <circle cx="15" cy="50" r="5" fill="#A8C0A8" stroke="#7C9B7C" stroke-width="1.5"/>
+              <circle cx="35" cy="65" r="5" fill="#A8C0A8" stroke="#7C9B7C" stroke-width="1.5"/>
+              <circle cx="50" cy="55" r="5" fill="#A8C0A8" stroke="#7C9B7C" stroke-width="1.5"/>
+              <path d="M20 15 L40 30" stroke="#7C9B7C" stroke-width="1" stroke-dasharray="3,2"/>
+              <path d="M40 30 L35 65" stroke="#7C9B7C" stroke-width="1" stroke-dasharray="3,2"/>
+              <path d="M15 50 L50 55" stroke="#7C9B7C" stroke-width="1" stroke-dasharray="3,2"/>
+            </g>
+            <text x="100" y="155" text-anchor="middle" font-size="14" fill="#7C9B7C" font-weight="500">吸热</text>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="info-row">
+            <span class="info-label">定义</span>
+            <div class="info-text">物质从<strong>液态</strong>变成<strong>气态</strong>的过程</div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">方式</span>
+            <div class="info-text">
+              <span class="condition-tag">蒸发</span> &nbsp;任何温度下，只在液体表面
+              <br/>
+              <span class="condition-tag" style="margin-top:6px;">沸腾</span> &nbsp;沸点时，液体内部和表面同时
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">实例</span>
+            <div class="info-text">水蒸发、水沸腾、酒精挥发</div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">特点</span>
+            <div class="info-text">蒸发有致冷作用；沸腾时温度<strong>不变</strong>（保持沸点）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 卡片3：升华 -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-number">3</div>
+        <div class="card-title-wrap">
+          <div class="card-title">升 华</div>
+          <div class="card-subtitle">固态 → 气态（直接）</div>
+        </div>
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5"/>
+          <path d="m5 12 7-7 7 7"/>
+          <path d="M5 12h14"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-visual">
+          <!-- 升华示意图：固态直接变气态 -->
+          <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+            <!-- 固态（底部） -->
+            <g transform="translate(10, 110)">
+              <rect x="10" y="10" width="60" height="30" rx="4" fill="#E0C9A6" stroke="#C4A484" stroke-width="2"/>
+              <rect x="10" y="10" width="60" height="10" rx="4" fill="#F0E0C8"/>
+              <text x="40" y="55" text-anchor="middle" font-size="12" fill="#C4A484">固态</text>
+            </g>
+            <!-- 向上弯曲箭头 -->
+            <defs>
+              <marker id="arrow3" markerWidth="10" markerHeight="10" refX="5" refY="8" orient="auto">
+                <path d="M0,10 L5,0 L10,10 z" fill="#C4A484"/>
+              </marker>
+            </defs>
+            <path d="M70 110 Q90 60 110 40 Q120 30 130 35"
+                  fill="none" stroke="#C4A484" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow3)"/>
+            <!-- 气态分子（右上） -->
+            <g transform="translate(130, 10)">
+              <circle cx="15" cy="20" r="5" fill="#E0C9A6" stroke="#C4A484" stroke-width="1.5"/>
+              <circle cx="40" cy="15" r="5" fill="#E0C9A6" stroke="#C4A484" stroke-width="1.5"/>
+              <circle cx="25" cy="45" r="5" fill="#E0C9A6" stroke="#C4A484" stroke-width="1.5"/>
+              <circle cx="50" cy="50" r="5" fill="#E0C9A6" stroke="#C4A484" stroke-width="1.5"/>
+              <text x="30" y="78" text-anchor="middle" font-size="12" fill="#C4A484">气态</text>
+            </g>
+            <text x="100" y="155" text-anchor="middle" font-size="14" fill="#C4A484" font-weight="500">吸热（不经过液态）</text>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="info-row">
+            <span class="info-label">定义</span>
+            <div class="info-text">物质从<strong>固态</strong>直接变成<strong>气态</strong>，不经过液态</div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">条件</span>
+            <div class="info-text">
+              <span class="condition-tag">吸热</span> &nbsp;特定物质在特定条件下
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">实例</span>
+            <div class="info-text">樟脑丸变小、干冰升华、冬天冰冻的衣服变干</div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">应用</span>
+            <div class="info-text">干冰人工降雨、舞台烟雾效果、冷冻治疗</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       物态变化循环图
+       ============================================================ -->
+  <div class="cycle-section">
+    <div class="section-label">
+      <span class="dot"></span>
+      <span class="text">物态变化全图</span>
+      <span class="divider"></span>
+    </div>
+
+    <div class="cycle-diagram">
+      <svg viewBox="0 0 980 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- 固态 -->
+        <g transform="translate(60, 70)">
+          <rect x="0" y="0" width="120" height="80" rx="12" fill="#E8F0F3" stroke="#6B8E9F" stroke-width="2.5"/>
+          <text x="60" y="50" text-anchor="middle" font-size="26" fill="#4A6B7A" font-weight="600">固态</text>
+        </g>
+
+        <!-- 液态 -->
+        <g transform="translate(430, 70)">
+          <rect x="0" y="0" width="120" height="80" rx="12" fill="#E6EDE6" stroke="#7C9B7C" stroke-width="2.5"/>
+          <text x="60" y="50" text-anchor="middle" font-size="26" fill="#5D7A5D" font-weight="600">液态</text>
+        </g>
+
+        <!-- 气态 -->
+        <g transform="translate(800, 70)">
+          <rect x="0" y="0" width="120" height="80" rx="12" fill="#F5EDE0" stroke="#C4A484" stroke-width="2.5"/>
+          <text x="60" y="50" text-anchor="middle" font-size="26" fill="#A08060" font-weight="600">气态</text>
+        </g>
+
+        <!-- 箭头定义 -->
+        <defs>
+          <marker id="arrBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 z" fill="#6B8E9F"/>
+          </marker>
+          <marker id="arrGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 z" fill="#7C9B7C"/>
+          </marker>
+          <marker id="arrOrange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 z" fill="#C4A484"/>
+          </marker>
+        </defs>
+
+        <!-- 熔化（固→液，上方） -->
+        <path d="M180 80 Q300 20 430 80" fill="none" stroke="#6B8E9F" stroke-width="3" marker-end="url(#arrBlue)"/>
+        <text x="305" y="40" text-anchor="middle" font-size="20" fill="#4A6B7A" font-weight="600">熔化（吸热）</text>
+
+        <!-- 凝固（液→固，下方） -->
+        <path d="M430 140 Q300 200 180 140" fill="none" stroke="#8B7E9B" stroke-width="3" marker-end="url(#arrBlue)" stroke-dasharray="0"/>
+        <text x="305" y="185" text-anchor="middle" font-size="20" fill="#6B5D7A" font-weight="600">凝固（放热）</text>
+
+        <!-- 汽化（液→气，上方） -->
+        <path d="M550 80 Q670 20 800 80" fill="none" stroke="#7C9B7C" stroke-width="3" marker-end="url(#arrGreen)"/>
+        <text x="675" y="40" text-anchor="middle" font-size="20" fill="#5D7A5D" font-weight="600">汽化（吸热）</text>
+
+        <!-- 液化（气→液，下方） -->
+        <path d="M800 140 Q670 200 550 140" fill="none" stroke="#9B8C7C" stroke-width="3" marker-end="url(#arrGreen)"/>
+        <text x="675" y="185" text-anchor="middle" font-size="20" fill="#7D6D5D" font-weight="600">液化（放热）</text>
+
+        <!-- 升华（固→气，顶部弧线） -->
+        <path d="M120 70 Q300 -60 860 70" fill="none" stroke="#C4A484" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrOrange)"/>
+        <text x="490" y="0" text-anchor="middle" font-size="20" fill="#A08060" font-weight="600">升华（吸热）</text>
+
+        <!-- 凝华（气→固，底部弧线） -->
+        <path d="M860 150 Q300 280 120 150" fill="none" stroke="#B87C7C" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrOrange)"/>
+        <text x="490" y="218" text-anchor="middle" font-size="20" fill="#9B5D5D" font-weight="600">凝华（放热）</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       总结区
+       ============================================================ -->
+  <div class="summary-section">
+    <div class="summary-card">
+      <div class="summary-label">记 忆 口 诀</div>
+      <div class="summary-text">
+        固态变液叫<span class="kw">熔化</span>，液态变气叫<span class="kw">汽化</span>，<br/>
+        固态直接变气态，名字叫做<span class="kw">升华</span>。<br/>
+        三个过程都<span class="kw">吸热</span>，反过来就都<span class="kw">放热</span>。
+      </div>
+      <div class="summary-footer">
+        <span>纳川图解 · nachuan-tujie</span>
+        <span>初中物理 · 八年级</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    if (typeof gsap === 'undefined') return;
+    const tl = gsap.timeline({ paused: true });
+    tl.from(".header", { y: 30, opacity: 0, duration: 0.5 })
+      .from(".card-1", { y: 30, opacity: 0, duration: 0.4 }, "-=0.2")
+      .from(".card-2", { y: 30, opacity: 0, duration: 0.4 }, "-=0.2")
+      .from(".card-3", { y: 30, opacity: 0, duration: 0.4 }, "-=0.2")
+      .from(".summary", { y: 20, opacity: 0, duration: 0.4 }, "-=0.2");
+    window.__timelines = { main: tl };
+  })();
+</script>
+
+</body>
+</html>

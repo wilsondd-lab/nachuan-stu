@@ -1,0 +1,27 @@
+{
+  "subject": "物理",
+  "grade": "初二",
+  "left_title": "速度",
+  "right_title": "加速度",
+  "subtitle": "描述运动的两个重要物理量",
+  "left_icon": "🏃",
+  "left_subtitle": "描述运动快慢",
+  "right_icon": "🚀",
+  "right_subtitle": "描述速度变化快慢",
+  "left_items": [
+    { "label": "定义", "value": "路程与时间之比" },
+    { "label": "公式", "value": "v = s / t" },
+    { "label": "单位", "value": "m/s 或 km/h" },
+    { "label": "物理意义", "value": "物体运动的快慢" },
+    { "label": "标量/矢量", "value": "矢量（有方向）" }
+  ],
+  "right_items": [
+    { "label": "定义", "value": "速度变化量与时间之比" },
+    { "label": "公式", "value": "a = Δv / t" },
+    { "label": "单位", "value": "m/s²" },
+    { "label": "物理意义", "value": "速度变化的快慢" },
+    { "label": "标量/矢量", "value": "矢量（有方向）" }
+  ],
+  "summary": "速度描述物体运动的快慢，加速度描述速度变化的快慢。速度大加速度不一定大（如匀速飞行的飞机），加速度大速度也不一定大（如刚启动的火箭）。",
+  "palette": "terracotta"
+}

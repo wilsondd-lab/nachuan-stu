@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>纳川图解 · 对比式模板</title>
+<style>
+  /* ============================================================
+     纳川图解 · 对比式模板
+     适合：速度vs加速度、弹力vs摩擦力、光合作用vs呼吸作用
+     固定尺寸：1080 x 1920 (9:16 竖版)
+     ============================================================ */
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    /* 莫兰迪配色 · 陶土橙 (默认) */
+    --accent: #C97E4E;
+    --accent-light: #E8C9B0;
+    --accent-dark: #A66238;
+    --bg: #F7F1E6;
+    --bg-card: #FFFDF8;
+    --text-primary: #3A3530;
+    --text-secondary: #6B645C;
+    --text-tertiary: #9A9186;
+    --divider: #D9CFC0;
+    --shadow: 0 4px 20px rgba(58, 53, 48, 0.08);
+  }
+
+  /* 配色方案 · 通过 body class 切换 */
+  body.palette-terracotta { --accent: #C97E4E; --accent-light: #E8C9B0; --accent-dark: #A66238; --bg: #F7F1E6; --bg-card: #FFFDF8; --text-primary: #3A3530; --text-secondary: #6B645C; --text-tertiary: #9A9186; --divider: #D9CFC0; }
+  body.palette-slate      { --accent: #3A506B; --accent-light: #B8C9D9; --accent-dark: #28384A; --bg: #EDF3F8; --bg-card: #FAFCFE; --text-primary: #2C3642; --text-secondary: #5A6573; --text-tertiary: #8A94A0; --divider: #C8D4E0; }
+  body.palette-teal       { --accent: #4A9E9B; --accent-light: #B8D9D7; --accent-dark: #357D7A; --bg: #EAF1E3; --bg-card: #F8FAF4; --text-primary: #364238; --text-secondary: #5E6B5A; --text-tertiary: #8E9678; --divider: #C8D4C0; }
+  body.palette-purple     { --accent: #7A6296; --accent-light: #C9BED9; --accent-dark: #5E4A78; --bg: #F7F3ED; --bg-card: #FDFBF7; --text-primary: #3A3542; --text-secondary: #655D70; --text-tertiary: #8A8294; --divider: #D4CCD9; }
+  body.palette-sage       { --accent: #5F6B4F; --accent-light: #B8C2A8; --accent-dark: #455038; --bg: #EAF1E3; --bg-card: #F6F8F0; --text-primary: #363D2E; --text-secondary: #5C664E; --text-tertiary: #8E9678; --divider: #C8D0B8; }
+  body.palette-caramel    { --accent: #8A624A; --accent-light: #D4B8A0; --accent-dark: #6A4A36; --bg: #F4E6C8; --bg-card: #FFF8E8; --text-primary: #4A3A2A; --text-secondary: #7A6550; --text-tertiary: #A09078; --divider: #E0D0B0; }
+
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: var(--bg);
+    font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---------- 顶部装饰 ---------- */
+  .header-deco {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent), var(--accent-light));
+  }
+
+  /* ---------- 品牌标识 ---------- */
+  .brand {
+    position: absolute;
+    top: 32px;
+    right: 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 2px;
+  }
+  .brand .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* ---------- 学科标签 ---------- */
+  .subject-tag {
+    position: absolute;
+    top: 100px;
+    left: 60px;
+    padding: 8px 20px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-radius: 24px;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 主标题区域 ---------- */
+  .title-section {
+    padding: 180px 60px 40px;
+    text-align: center;
+  }
+  .title-main {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .title-main .highlight {
+    color: var(--accent);
+  }
+  .title-sub {
+    font-size: 28px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ---------- 对比容器 ---------- */
+  .compare-container {
+    display: flex;
+    padding: 20px 40px;
+    gap: 0;
+    position: relative;
+    margin-top: 20px;
+  }
+
+  .compare-side {
+    flex: 1;
+    padding: 40px 32px;
+    background: var(--bg-card);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .compare-side.left {
+    margin-right: 30px;
+    border-top: 6px solid var(--accent);
+  }
+
+  .compare-side.right {
+    margin-left: 30px;
+    border-top: 6px solid var(--text-tertiary);
+  }
+
+  /* VS 分隔 */
+  .vs-divider {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(201, 126, 78, 0.3);
+  }
+
+  .side-header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px dashed var(--divider);
+  }
+  .side-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+  .side-title {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .side-subtitle {
+    font-size: 22px;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+  }
+
+  /* 对比项目列表 */
+  .compare-list {
+    list-style: none;
+  }
+  .compare-list li {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--divider);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .compare-list li:last-child {
+    border-bottom: none;
+  }
+  .compare-list .item-label {
+    font-size: 20px;
+    color: var(--text-tertiary);
+    min-width: 80px;
+    font-weight: 500;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .compare-list .item-value {
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  /* ---------- 底部总结 ---------- */
+  .summary-section {
+    position: absolute;
+    bottom: 100px;
+    left: 60px;
+    right: 60px;
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-card) 100%);
+    border-radius: 20px;
+    padding: 36px 40px;
+    border-left: 6px solid var(--accent);
+  }
+  .summary-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .summary-text {
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.7;
+  }
+
+  /* ---------- 底部页码/品牌 ---------- */
+  .footer {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-tertiary);
+    letter-spacing: 4px;
+  }
+
+  /* ---------- 占位符样式 ---------- */
+  .placeholder {
+    opacity: 0.6;
+    font-style: italic;
+  }
+</style>
+</head>
+<body class="palette-terracotta">
+
+  <!-- 顶部装饰条 -->
+  <div class="header-deco"></div>
+
+  <!-- 品牌标识 -->
+  <div class="brand">
+    <span class="dot"></span>
+    <span>纳川图解</span>
+  </div>
+
+  <!-- 学科标签 -->
+  <div class="subject-tag">物理 · 初二</div>
+
+  <!-- 主标题 -->
+  <div class="title-section">
+    <div class="title-main">速度 <span class="highlight">VS</span> 加速度</div>
+    <div class="title-sub">描述运动的两个重要物理量</div>
+  </div>
+
+  <!-- 对比内容 -->
+  <div class="compare-container">
+    <div class="compare-side left">
+      <div class="side-header">
+        <div class="side-icon">🏃</div>
+        <div class="side-title">速度</div>
+        <div class="side-subtitle">描述运动快慢</div>
+      </div>
+      <ul class="compare-list">
+        
+        <li>
+          <span class="item-label">定义</span>
+          <span class="item-value">路程与时间之比</span>
+        </li>
+        
+        <li>
+          <span class="item-label">公式</span>
+          <span class="item-value">v = s / t</span>
+        </li>
+        
+        <li>
+          <span class="item-label">单位</span>
+          <span class="item-value">m/s 或 km/h</span>
+        </li>
+        
+        <li>
+          <span class="item-label">物理意义</span>
+          <span class="item-value">物体运动的快慢</span>
+        </li>
+        
+        <li>
+          <span class="item-label">标量/矢量</span>
+          <span class="item-value">矢量（有方向）</span>
+        </li>
+        
+      </ul>
+    </div>
+
+    <div class="vs-divider">VS</div>
+
+    <div class="compare-side right">
+      <div class="side-header">
+        <div class="side-icon">🚀</div>
+        <div class="side-title">加速度</div>
+        <div class="side-subtitle">描述速度变化快慢</div>
+      </div>
+      <ul class="compare-list">
+        
+        <li>
+          <span class="item-label">定义</span>
+          <span class="item-value">速度变化量与时间之比</span>
+        </li>
+        
+        <li>
+          <span class="item-label">公式</span>
+          <span class="item-value">a = Δv / t</span>
+        </li>
+        
+        <li>
+          <span class="item-label">单位</span>
+          <span class="item-value">m/s²</span>
+        </li>
+        
+        <li>
+          <span class="item-label">物理意义</span>
+          <span class="item-value">速度变化的快慢</span>
+        </li>
+        
+        <li>
+          <span class="item-label">标量/矢量</span>
+          <span class="item-value">矢量（有方向）</span>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <!-- 底部总结 -->
+  <div class="summary-section">
+    <div class="summary-title">💡 核心区别</div>
+    <div class="summary-text">速度描述物体运动的快慢，加速度描述速度变化的快慢。速度大加速度不一定大（如匀速飞行的飞机），加速度大速度也不一定大（如刚启动的火箭）。</div>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer">NACHUAN · 准高中生AI学习伙伴</div>
+
+</body>
+</html>

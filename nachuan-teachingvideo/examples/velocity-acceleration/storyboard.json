@@ -1,0 +1,59 @@
+{
+  "topic": "速度与加速度",
+  "topic_slug": "velocity-acceleration",
+  "chapter": "高一物理·运动学",
+  "palette": "mechanics",
+  "voice": { "provider": "auto", "voice_id": "female-chengshu", "speed": 1.0 },
+  "segments": [
+    {
+      "id": 1,
+      "title": "引入",
+      "narration": "同学们，你是不是经常把速度和加速度搞混？很多人以为速度大加速度就大，但其实完全不是一回事。今天我们一次搞懂。",
+      "visual": "主标题'速度与加速度' + 汽车加速图标 + 五个子概念胶囊 + 副标题'别再搞混了'",
+      "transition": "blur-crossfade",
+      "min_duration": 7
+    },
+    {
+      "id": 2,
+      "title": "什么是速度",
+      "narration": "先看速度。速度表示运动的快慢，等于路程除以时间。一辆车一小时跑一百公里，它的速度就是一百千米每小时。",
+      "visual": "左侧速度公式 v=s/t + 变量解释；右侧汽车匀速行驶示意图 + 速度表指针",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 3,
+      "title": "什么是加速度",
+      "narration": "那加速度呢？加速度是速度变化的快慢。汽车从静止加速到一百公里用了十秒，这就是加速度在起作用。",
+      "visual": "左侧加速度公式 a=Δv/Δt + 变量解释；右侧汽车加速示意图 + 速度表指针转动",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 4,
+      "title": "核心区别",
+      "narration": "一句话区分：速度是跑得多快，加速度是变得多快。匀速飞行的飞机速度很大，但加速度是零，因为速度没变。",
+      "visual": "左右对比：左=速度大加速度为零(匀速飞机)，右=速度小加速度大(火箭起飞)；中间VS标识",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 5,
+      "title": "生活例子",
+      "narration": "再举个例子：跑车起步时加速度大，速度从零快速增加；但跑起来之后匀速行驶，速度很大，加速度却是零。",
+      "visual": "生活场景：跑车起步 vs 高铁匀速；两个场景对比，标注速度和加速度的大小",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 6,
+      "title": "小测验",
+      "narration": "来做道题：一辆车速度很大，加速度一定很大吗？答案是不一定。匀速运动的车速度再大，加速度也是零。",
+      "visual": "选择题：速度大加速度就大对不对？选项对/错；揭晓答案：错，解释匀速运动加速度为零",
+      "transition": "push-up"
+    },
+    {
+      "id": 7,
+      "title": "总结",
+      "narration": "最后记住：速度 v 等于 s 除以 t，表示运动快慢；加速度 a 等于Δv 除以Δt，表示速度变化快慢。别再搞混啦！",
+      "visual": "大公式 v=s/t 和 a=Δv/Δt 并置 + 要点回顾卡片 + 五枚概念徽章",
+      "min_duration": 8
+    }
+  ]
+}

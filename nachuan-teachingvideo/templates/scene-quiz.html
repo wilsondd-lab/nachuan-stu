@@ -1,0 +1,201 @@
+<!-- ============================================================
+  scene-quiz.html — 问答揭晓场景模板
+  ============================================================
+  用途：问题抛出 → 悬念 → 答案揭示，测试学生理解
+  插槽：
+    #quiz-question — 问题内容
+    #quiz-options  — 选项（2-4个）
+    #quiz-answer   — 答案揭示区
+    #quiz-explain  — 答案解释
+  动画：问题出现 → 选项逐条浮现 → 正确答案高亮 → 解释滑入
+  配色：问题用中性色，正确答案主色高亮，错误答案淡化
+  ============================================================ -->
+
+<div class="scene scene-quiz">
+  <div class="ghost" data-layout-ignore>01</div>
+  <div class="section-chip"><span class="num">1</span><span class="label">小测验</span></div>
+
+  <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 36px;">
+    <!-- 问题 -->
+    <div id="quiz-question" style="
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--ink);
+      text-align: center;
+      padding: 20px 60px;
+    ">
+      以下哪个是速度的单位？
+    </div>
+
+    <!-- 选项区 -->
+    <div id="quiz-options" style="
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    ">
+      <!-- 选项 A（正确答案，加 .correct 类） -->
+      <div class="quiz-option correct" style="
+        background: #fff;
+        border: 3px solid var(--neutral);
+        border-radius: 18px;
+        padding: 24px 32px;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 10%, transparent);
+        cursor: pointer;
+      ">
+        <span class="option-label" style="
+          width: 44px; height: 44px; border-radius: 50%;
+          background: var(--neutral); color: #fff;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 24px; font-weight: 800;
+        ">A</span>
+        m/s（米每秒）
+      </div>
+
+      <!-- 选项 B -->
+      <div class="quiz-option" style="
+        background: #fff;
+        border: 3px solid var(--neutral);
+        border-radius: 18px;
+        padding: 24px 32px;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 10%, transparent);
+        cursor: pointer;
+      ">
+        <span class="option-label" style="
+          width: 44px; height: 44px; border-radius: 50%;
+          background: var(--neutral); color: #fff;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 24px; font-weight: 800;
+        ">B</span>
+        m（米）
+      </div>
+
+      <!-- 选项 C -->
+      <div class="quiz-option" style="
+        background: #fff;
+        border: 3px solid var(--neutral);
+        border-radius: 18px;
+        padding: 24px 32px;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 10%, transparent);
+        cursor: pointer;
+      ">
+        <span class="option-label" style="
+          width: 44px; height: 44px; border-radius: 50%;
+          background: var(--neutral); color: #fff;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 24px; font-weight: 800;
+        ">C</span>
+        s（秒）
+      </div>
+
+      <!-- 选项 D -->
+      <div class="quiz-option" style="
+        background: #fff;
+        border: 3px solid var(--neutral);
+        border-radius: 18px;
+        padding: 24px 32px;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 10%, transparent);
+        cursor: pointer;
+      ">
+        <span class="option-label" style="
+          width: 44px; height: 44px; border-radius: 50%;
+          background: var(--neutral); color: #fff;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 24px; font-weight: 800;
+        ">D</span>
+        kg（千克）
+      </div>
+    </div>
+
+    <!-- 答案揭示 + 解释 -->
+    <div id="quiz-answer" style="
+      display: flex;
+      align-items: flex-start;
+      gap: 30px;
+      padding: 24px 40px;
+      background: color-mix(in srgb, var(--primary) 8%, #fff);
+      border-radius: 18px;
+      border-left: 6px solid var(--primary);
+      max-width: 1000px;
+      margin: 0 auto;
+    ">
+      <div style="
+        font-size: 48px;
+        font-weight: 900;
+        color: var(--primary);
+        flex-shrink: 0;
+      ">✓</div>
+      <div id="quiz-explain" style="flex: 1;">
+        <div style="font-size: 30px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">
+          正确答案：A. m/s
+        </div>
+        <div style="font-size: 26px; color: var(--ink); line-height: 1.6;">
+          速度 = 路程 / 时间，所以单位是米除以秒，即 m/s。
+          千米每小时（km/h）也是常用的速度单位。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========= 此场景入场动画（GSAP） =========
+  用法：把下面这段函数体复制到 index.html 的对应 sceneN(t) 函数里
+
+function sceneN(t) {
+  // 问题从上方浮入
+  tl.fromTo("#quiz-question", { y: -40, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 0.2);
+  // 选项逐个弹出
+  tl.fromTo(".quiz-option", { scale: 0.8, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.5, stagger: 0.2, ease: "back.out(1.5)" }, t + 0.6);
+  // 停顿后，正确答案高亮
+  tl.to(".quiz-option.correct", {
+    borderColor: "var(--primary)",
+    boxShadow: "0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent)",
+    scale: 1.03,
+    duration: 0.4,
+    ease: "back.out(1.5)"
+  }, t + 2.2);
+  tl.to(".quiz-option.correct .option-label", {
+    background: "var(--primary)",
+    duration: 0.3
+  }, t + 2.2);
+  // 错误选项淡化
+  tl.to(".quiz-option:not(.correct)", {
+    opacity: 0.5,
+    duration: 0.4
+  }, t + 2.3);
+  // 答案解释从下滑入
+  tl.fromTo("#quiz-answer", { y: 40, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, t + 2.8);
+  // 环境动效：正确答案轻微脉动
+  tl.to(".quiz-option.correct", { scale: 1.05, yoyo: true, repeat: -1,
+    duration: 1.2, ease: "sine.inOut" }, t + 3.5);
+}
+-->

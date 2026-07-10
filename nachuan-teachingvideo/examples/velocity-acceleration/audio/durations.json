@@ -1,0 +1,80 @@
+{
+  "topic": "速度与加速度",
+  "provider": "text",
+  "voice_id": "female-chengshu",
+  "head_pad": 0.6,
+  "tail_pad": 0.9,
+  "total": 98.5,
+  "segments": [
+    {
+      "id": 1,
+      "title": "引入",
+      "file": "audio/seg-01.mp3",
+      "audio_duration": 13.5,
+      "start": 0.0,
+      "audio_start": 0.6,
+      "duration": 15.0,
+      "subtitle": "同学们，你是不是经常把速度和加速度搞混？很多人以为速度大加速度就大，但其实完全不是一回事。今天我们一次搞懂。"
+    },
+    {
+      "id": 2,
+      "title": "什么是速度",
+      "file": "audio/seg-02.mp3",
+      "audio_duration": 12.5,
+      "start": 15.0,
+      "audio_start": 15.6,
+      "duration": 14.0,
+      "subtitle": "先看速度。速度表示运动的快慢，等于路程除以时间。一辆车一小时跑一百公里，它的速度就是一百千米每小时。"
+    },
+    {
+      "id": 3,
+      "title": "什么是加速度",
+      "file": "audio/seg-03.mp3",
+      "audio_duration": 11.5,
+      "start": 29.0,
+      "audio_start": 29.6,
+      "duration": 13.0,
+      "subtitle": "那加速度呢？加速度是速度变化的快慢。汽车从静止加速到一百公里用了十秒，这就是加速度在起作用。"
+    },
+    {
+      "id": 4,
+      "title": "核心区别",
+      "file": "audio/seg-04.mp3",
+      "audio_duration": 12.25,
+      "start": 42.0,
+      "audio_start": 42.6,
+      "duration": 13.75,
+      "subtitle": "一句话区分：速度是跑得多快，加速度是变得多快。匀速飞行的飞机速度很大，但加速度是零，因为速度没变。"
+    },
+    {
+      "id": 5,
+      "title": "生活例子",
+      "file": "audio/seg-05.mp3",
+      "audio_duration": 12.0,
+      "start": 55.75,
+      "audio_start": 56.35,
+      "duration": 13.5,
+      "subtitle": "再举个例子：跑车起步时加速度大，速度从零快速增加；但跑起来之后匀速行驶，速度很大，加速度却是零。"
+    },
+    {
+      "id": 6,
+      "title": "小测验",
+      "file": "audio/seg-06.mp3",
+      "audio_duration": 11.75,
+      "start": 69.25,
+      "audio_start": 69.85,
+      "duration": 13.25,
+      "subtitle": "来做道题：一辆车速度很大，加速度一定很大吗？答案是不一定。匀速运动的车速度再大，加速度也是零。"
+    },
+    {
+      "id": 7,
+      "title": "总结",
+      "file": "audio/seg-07.mp3",
+      "audio_duration": 14.5,
+      "start": 82.5,
+      "audio_start": 83.1,
+      "duration": 16.0,
+      "subtitle": "最后记住：速度 v 等于 s 除以 t，表示运动快慢；加速度 a 等于Δv 除以Δt，表示速度变化快慢。别再搞混啦！"
+    }
+  ]
+}

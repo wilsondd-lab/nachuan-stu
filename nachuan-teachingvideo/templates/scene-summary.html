@@ -1,0 +1,92 @@
+<!-- ============================================================
+  scene-summary.html — 总结收尾场景模板
+  ============================================================
+  用途：视频最后一段，核心公式/数字 + 要点回顾 + 徽章排
+  插槽：
+    #summary-number  — 大数字/核心公式
+    #summary-note    — 数字注释
+    .info-card       — 要点回顾卡片
+    .summary-bar     — 徽章横排（概念回顾）
+  动画：大数字弹入 + 卡片滑入 + 徽章逐个出现 + 收尾淡出
+  配色：主色突出核心数字，整体温暖收束
+  ============================================================ -->
+
+<div class="scene scene-summary">
+  <div class="ghost" data-layout-ignore>06</div>
+  <div class="section-chip"><span class="num">6</span><span class="label">总结</span></div>
+
+  <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 30px;">
+    <!-- 大数字/核心公式 -->
+    <div id="summary-number" class="t-hero" style="font-size: 150px; text-align: center;">
+      <span id="summary-number-inner" style="display: inline-block;">v = s / t</span>
+    </div>
+
+    <!-- 数字注释 -->
+    <div id="summary-note" class="t-label" style="font-size: 28px; text-align: center;">
+      速度 = 路程 ÷ 时间
+    </div>
+
+    <!-- 要点回顾卡片 -->
+    <div class="info-card" id="summary-card" style="width: 1060px; flex: none;">
+      <div class="card-title">本章小结</div>
+      <div class="card-body">
+        <p>速度表示物体运动的快慢</p>
+        <p>速度等于单位时间内通过的路程</p>
+        <p>公式：v = s / t，单位：m/s 或 km/h</p>
+        <p>匀速直线运动的速度保持不变</p>
+      </div>
+    </div>
+
+    <!-- 徽章横排（核心概念回顾） -->
+    <div class="summary-bar" id="summary-bar">
+      <div class="badge">
+        <div class="icon">→</div>
+        <div class="name">运动</div>
+      </div>
+      <div class="badge">
+        <div class="icon">v</div>
+        <div class="name">速度</div>
+      </div>
+      <div class="badge">
+        <div class="icon">s</div>
+        <div class="name">路程</div>
+      </div>
+      <div class="badge">
+        <div class="icon">t</div>
+        <div class="name">时间</div>
+      </div>
+      <div class="badge">
+        <div class="icon">∿</div>
+        <div class="name">匀速</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========= 此场景入场动画（GSAP） =========
+  用法：把下面这段函数体复制到 index.html 的对应 scene7(t) 函数里
+
+function scene7(t) {
+  // 大数字弹入
+  tl.fromTo("#summary-number", { scale: 0.4, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.6)" }, t + 0.3);
+  // 注释淡入
+  tl.fromTo("#summary-note", { opacity: 0 },
+    { opacity: 1, duration: 0.5, ease: "sine.out" }, t + 1.0);
+  // 卡片从下滑入
+  tl.fromTo("#summary-card", { y: 60, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 1.4);
+  // 徽章逐个弹入
+  tl.fromTo("#summary-bar .badge", { y: 40, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, stagger: 0.12, ease: "back.out(1.5)" }, t + 2.2);
+  // 大数字呼吸动效
+  tl.to("#summary-number-inner", { scale: 1.03, transformOrigin: "50% 50%",
+    yoyo: true, repeat: -1, duration: 1.8, ease: "sine.inOut" }, t + 1.4);
+  // 收尾淡出（仅视频模式；无声循环模式不要淡出）
+  if (MODE !== "silent") {
+    const end = t + SEGMENTS[6].duration;
+    tl.to("#s7 .scene-content, #s7 .section-chip, #chapter",
+      { opacity: 0, duration: 0.6, ease: "power1.in" }, end - 0.7);
+  }
+}
+-->

@@ -1,0 +1,20 @@
+{
+  "subject": "数学",
+  "grade": "初二",
+  "formula_category": "几何定理",
+  "formula_title": "勾股定理",
+  "formula_content": "a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup>",
+  "formula_description": "直角三角形两条直角边的平方和等于斜边的平方",
+  "variables": [
+    { "symbol": "a", "name": "直角边", "unit": "长度单位" },
+    { "symbol": "b", "name": "直角边", "unit": "长度单位" },
+    { "symbol": "c", "name": "斜边", "unit": "长度单位" }
+  ],
+  "conditions": [
+    "只适用于直角三角形",
+    "c 必须是斜边（直角的对边）",
+    "斜边是三角形中最长的边"
+  ],
+  "notes": "常见勾股数：3-4-5、5-12-13、8-15-17。它们的整数倍仍然是勾股数。逆定理也成立：若 a²+b²=c²，则三角形为直角三角形。",
+  "palette": "purple"
+}

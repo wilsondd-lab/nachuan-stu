@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>纳川图解 · 步骤式模板</title>
+<style>
+  /* ============================================================
+     纳川图解 · 步骤式模板
+     适合：实验步骤、解题步骤、生命周期
+     固定尺寸：1080 x 1920 (9:16 竖版)
+     ============================================================ */
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #C97E4E;
+    --accent-light: #E8C9B0;
+    --accent-dark: #A66238;
+    --bg: #F7F1E6;
+    --bg-card: #FFFDF8;
+    --text-primary: #3A3530;
+    --text-secondary: #6B645C;
+    --text-tertiary: #9A9186;
+    --divider: #D9CFC0;
+    --shadow: 0 4px 20px rgba(58, 53, 48, 0.08);
+  }
+
+  body.palette-terracotta { --accent: #C97E4E; --accent-light: #E8C9B0; --accent-dark: #A66238; --bg: #F7F1E6; --bg-card: #FFFDF8; --text-primary: #3A3530; --text-secondary: #6B645C; --text-tertiary: #9A9186; --divider: #D9CFC0; }
+  body.palette-slate      { --accent: #3A506B; --accent-light: #B8C9D9; --accent-dark: #28384A; --bg: #EDF3F8; --bg-card: #FAFCFE; --text-primary: #2C3642; --text-secondary: #5A6573; --text-tertiary: #8A94A0; --divider: #C8D4E0; }
+  body.palette-teal       { --accent: #4A9E9B; --accent-light: #B8D9D7; --accent-dark: #357D7A; --bg: #EAF1E3; --bg-card: #F8FAF4; --text-primary: #364238; --text-secondary: #5E6B5A; --text-tertiary: #8E9678; --divider: #C8D4C0; }
+  body.palette-purple     { --accent: #7A6296; --accent-light: #C9BED9; --accent-dark: #5E4A78; --bg: #F7F3ED; --bg-card: #FDFBF7; --text-primary: #3A3542; --text-secondary: #655D70; --text-tertiary: #8A8294; --divider: #D4CCD9; }
+  body.palette-sage       { --accent: #5F6B4F; --accent-light: #B8C2A8; --accent-dark: #455038; --bg: #EAF1E3; --bg-card: #F6F8F0; --text-primary: #363D2E; --text-secondary: #5C664E; --text-tertiary: #8E9678; --divider: #C8D0B8; }
+  body.palette-caramel    { --accent: #8A624A; --accent-light: #D4B8A0; --accent-dark: #6A4A36; --bg: #F4E6C8; --bg-card: #FFF8E8; --text-primary: #4A3A2A; --text-secondary: #7A6550; --text-tertiary: #A09078; --divider: #E0D0B0; }
+
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: var(--bg);
+    font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .header-deco {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent), var(--accent-light));
+  }
+
+  .brand {
+    position: absolute;
+    top: 32px; right: 48px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 22px; font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 2px;
+  }
+  .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+
+  .subject-tag {
+    position: absolute;
+    top: 100px; left: 60px;
+    padding: 8px 20px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-radius: 24px;
+    font-size: 24px; font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* 标题区 */
+  .title-section {
+    padding: 180px 60px 10px;
+    text-align: center;
+  }
+  .title-main {
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .title-main .accent { color: var(--accent); }
+  .title-sub {
+    font-size: 28px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* 步骤时间线 */
+  .steps-container {
+    padding: 40px 60px 0;
+    position: relative;
+  }
+
+  /* 垂直连接线 */
+  .steps-connector {
+    position: absolute;
+    left: 108px;
+    top: 80px;
+    bottom: 120px;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-light) 100%);
+    border-radius: 2px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 36px;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .step-number {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(201, 126, 78, 0.3);
+    position: relative;
+    z-index: 3;
+  }
+
+  .step-content {
+    flex: 1;
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+
+  .step-content::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 42px;
+    width: 0; height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-right: 14px solid var(--bg-card);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .step-icon {
+    font-size: 36px;
+  }
+  .step-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .step-desc {
+    font-size: 24px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .step-detail {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--divider);
+    font-size: 22px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+  }
+
+  /* 箭头指示器 */
+  .step-arrow {
+    position: absolute;
+    left: 96px;
+    bottom: -28px;
+    font-size: 28px;
+    color: var(--accent);
+    z-index: 1;
+  }
+
+  /* 底部总结 */
+  .summary-section {
+    position: absolute;
+    bottom: 100px;
+    left: 60px; right: 60px;
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-card) 100%);
+    border-radius: 20px;
+    padding: 32px 36px;
+    border-left: 6px solid var(--accent);
+  }
+  .summary-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .summary-text {
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.7;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 40px; left: 0; right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-tertiary);
+    letter-spacing: 4px;
+  }
+</style>
+</head>
+<body class="palette-terracotta">
+
+  <div class="header-deco"></div>
+
+  <div class="brand">
+    <span class="dot"></span>
+    <span>纳川图解</span>
+  </div>
+
+  <div class="subject-tag">{{subject}} · {{grade}}</div>
+
+  <div class="title-section">
+    <div class="title-main">{{title}}</div>
+    <div class="title-sub">{{subtitle}}</div>
+  </div>
+
+  <div class="steps-container">
+    <div class="steps-connector"></div>
+
+    {{#steps}}
+    <div class="step-item">
+      <div class="step-number">{{number}}</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-icon">{{icon}}</span>
+          <span class="step-title">{{title}}</span>
+        </div>
+        <div class="step-desc">{{description}}</div>
+        {{#detail}}
+        <div class="step-detail">{{detail}}</div>
+        {{/detail}}
+      </div>
+      {{#has_next}}
+      <div class="step-arrow">↓</div>
+      {{/has_next}}
+    </div>
+    {{/steps}}
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-title">📌 关键要点</div>
+    <div class="summary-text">{{summary}}</div>
+  </div>
+
+  <div class="footer">NACHUAN · 准高中生AI学习伙伴</div>
+
+</body>
+</html>

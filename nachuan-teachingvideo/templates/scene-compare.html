@@ -1,0 +1,99 @@
+<!-- ============================================================
+  scene-compare.html — 左右对比场景模板
+  ============================================================
+  用途：两个概念对比展示（速度vs加速度、音调vs响度、串联vs并联）
+  插槽：
+    .compare-left  — 左侧概念（标题 + 示意图 + 要点列表）
+    .compare-right — 右侧概念（标题 + 示意图 + 要点列表）
+    .vs-badge      — 中间对比标识
+  动画：左滑入 + 右滑入 + 中间VS弹出 + 要点逐条出现
+  配色：左侧主色，右侧次强调色，形成对比
+  ============================================================ -->
+
+<div class="scene scene-compare">
+  <div class="ghost" data-layout-ignore>01</div>
+  <div class="section-chip"><span class="num">1</span><span class="label">对比标题</span></div>
+
+  <div class="scene-content" style="gap: 40px;">
+    <!-- 左侧 -->
+    <div class="compare-left" style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
+      <div class="compare-title" style="font-size: 42px; font-weight: 800; color: var(--primary);">
+        概念A
+      </div>
+      <div class="compare-diagram" style="height: 340px;">
+        <svg viewBox="0 0 500 340" style="width: 100%; height: 100%; overflow: visible;">
+          <!-- TODO: 左侧示意图 SVG -->
+          <rect x="50" y="80" width="400" height="180" rx="12"
+                fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="8 6"/>
+          <text x="250" y="180" text-anchor="middle" font-size="36" fill="var(--primary)">左示意图</text>
+        </svg>
+      </div>
+      <div class="info-card">
+        <div class="card-title">要点</div>
+        <div class="card-body">
+          <p>要点一</p>
+          <p>要点二</p>
+          <p>要点三</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中间 VS 标识 -->
+    <div class="vs-badge" style="
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 90px; height: 90px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-size: 36px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5; box-shadow: 0 8px 32px color-mix(in srgb, var(--primary) 30%, transparent);
+    ">VS</div>
+
+    <!-- 右侧 -->
+    <div class="compare-right" style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
+      <div class="compare-title" style="font-size: 42px; font-weight: 800; color: var(--accent); text-align: right;">
+        概念B
+      </div>
+      <div class="compare-diagram" style="height: 340px;">
+        <svg viewBox="0 0 500 340" style="width: 100%; height: 100%; overflow: visible;">
+          <!-- TODO: 右侧示意图 SVG -->
+          <rect x="50" y="80" width="400" height="180" rx="12"
+                fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="8 6"/>
+          <text x="250" y="180" text-anchor="middle" font-size="36" fill="var(--accent)">右示意图</text>
+        </svg>
+      </div>
+      <div class="info-card" style="border-left-color: var(--accent);">
+        <div class="card-title" style="color: var(--accent);">要点</div>
+        <div class="card-body">
+          <p>要点一</p>
+          <p>要点二</p>
+          <p>要点三</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========= 此场景入场动画（GSAP） =========
+  用法：把下面这段函数体复制到 index.html 的对应 sceneN(t) 函数里
+
+function sceneN(t) {
+  // 左侧从左滑入
+  tl.fromTo(".compare-left", { x: -80, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 0.2);
+  // 右侧从右滑入
+  tl.fromTo(".compare-right", { x: 80, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 0.4);
+  // 中间 VS 弹出
+  tl.fromTo(".vs-badge", { scale: 0, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.8)" }, t + 0.9);
+  // 左卡片要点逐条出现
+  tl.fromTo(".compare-left .info-card p", { x: -20, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.4, stagger: 0.12, ease: "power2.out" }, t + 1.2);
+  // 右卡片要点逐条出现
+  tl.fromTo(".compare-right .info-card p", { x: 20, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.4, stagger: 0.12, ease: "power2.out" }, t + 1.5);
+  // 环境动效：VS 徽章呼吸
+  tl.to(".vs-badge", { scale: 1.08, yoyo: true, repeat: -1,
+    duration: 1.2, ease: "sine.inOut" }, t + 2.0);
+}
+-->

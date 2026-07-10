@@ -1,0 +1,75 @@
+<!-- ============================================================
+  scene-title.html — 标题引入场景模板
+  ============================================================
+  用途：视频第一段，大标题 + 主题图标 + 子概念胶囊 + 副标题
+  插槽：
+    #scene-icon    — 主题图标（SVG，替换里面的内容）
+    #scene-title   — 大标题文字
+    .pill          — 子概念胶囊（可增减，复制粘贴即可）
+    #scene-tagline — 副标题文字
+  动画：标题浮入 + 图标弹入 + 胶囊逐个出现 + 副标题淡入
+  配色：通过 :root 的 CSS 变量控制，一键换主题
+  ============================================================ -->
+
+<div class="scene scene-title">
+  <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 40px;">
+    <!-- 主题图标 — 替换里面的SVG内容 -->
+    <div id="scene-icon" style="height: 190px;">
+      <svg viewBox="0 0 420 210" style="height: 190px; overflow: visible;">
+        <!-- TODO: 替换为主题图标 SVG
+             示例：速度与加速度 → 汽车/箭头/跑道
+             示例：声现象 → 音叉/波形
+             示例：光合作用 → 叶子/太阳 -->
+        <circle cx="210" cy="105" r="60" fill="none" stroke="var(--primary)" stroke-width="4"/>
+        <text x="210" y="120" text-anchor="middle" font-size="48" fill="var(--primary)" font-weight="bold">?</text>
+      </svg>
+    </div>
+
+    <!-- 大标题 -->
+    <div id="scene-title" class="t-hero">主题名称</div>
+
+    <!-- 子概念胶囊 — 可复制 .pill 增加/减少 -->
+    <div id="scene-pills" style="display: flex; gap: 22px;">
+      <span class="pill">子概念1</span>
+      <span class="pill">子概念2</span>
+      <span class="pill">子概念3</span>
+      <span class="pill">子概念4</span>
+      <span class="pill">子概念5</span>
+    </div>
+
+    <!-- 副标题 -->
+    <div id="scene-tagline" class="t-label">—— 副标题文字 ——</div>
+  </div>
+</div>
+
+<!-- ========= 此场景专属样式（如需覆盖） ========= -->
+<style>
+  .pill {
+    background: #fff;
+    border: 1.5px solid color-mix(in srgb, var(--neutral) 40%, transparent);
+    border-radius: 16px;
+    padding: 10px 26px;
+    font-size: 28px;
+    font-weight: 700;
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+  }
+</style>
+
+<!-- ========= 此场景入场动画（GSAP） =========
+  用法：把下面这段函数体复制到 index.html 的 scene1(t) 函数里
+  注意：所有时间用 t + 偏移量，t 是场景起始时间
+
+function scene1(t) {
+  tl.fromTo("#scene-title", { y: 70, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.2);
+  tl.fromTo("#scene-icon", { scale: 0.6, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.5)" }, t + 0.7);
+  tl.fromTo("#scene-pills .pill", { y: 34, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.45, ease: "power2.out", stagger: 0.09 }, t + 1.2);
+  tl.fromTo("#scene-tagline", { opacity: 0 },
+    { opacity: 1, duration: 0.6, ease: "sine.out" }, t + 1.9);
+  // 环境动效：图标轻微呼吸
+  tl.to("#scene-icon svg", { scale: 1.03, transformOrigin: "50% 50%",
+    yoyo: true, repeat: -1, duration: 1.8, ease: "sine.inOut" }, t + 2.0);
+}
+-->
