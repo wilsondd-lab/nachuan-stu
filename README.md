@@ -1,137 +1,153 @@
-# 纳川 Skills · 准高中生AI学习伙伴
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="纳川 Skills：在 TRAE CN 中把 AI 对话变成可保存、复述和回看的学习资料">
+</p>
 
-本仓库包含两个为**准高中生**量身打造的AI学习技能，基于 [linyuebanzi-skills](https://github.com/lqshow/linyuebanzi-skills) 深度改造，融合 OpenMontage 视频制作方法论，结合《准高中生AI橙皮书》教育理念。
+给准高中生和家长的 AI 学习增强包。安装到 **TRAE CN** 后，用自然语言调用两个 Skill，把抽象知识做成可核对的图解和可回看的教学视频。
 
----
+## 先看真实产物
 
-## Skill 列表
+<p align="center">
+  <a href="./assets/showcase/nachuan-tujie-speed-vs-acceleration.png"><img src="./assets/showcase/nachuan-tujie-speed-vs-acceleration.png" width="34%" alt="纳川图解生成的速度与加速度对比知识图"></a>
+  &nbsp;&nbsp;
+  <a href="./assets/showcase/nachuan-teachingvideo-montage.png"><img src="./assets/showcase/nachuan-teachingvideo-montage.png" width="62%" alt="纳川教学视频生成的声现象教学分镜"></a>
+</p>
 
-### 1. nachuan-tujie（纳川图解）
+这两张图来自仓库现有模板和示例的本机渲染结果，不是概念效果图。生成后的知识内容仍需孩子复述、练习并用教材核对。
 
-**教育信息图生成工具**
+## 一次安装，两种学习产出
 
-- **功能**：将初中全科知识点转化为 9:16 竖版教育信息图
-- **学科覆盖**：语文、数学、英语、物理、化学、生物、政治、历史、地理 + 高中预科
-- **核心特性**：
-  - 🎨 7 套莫兰迪主题配色，学科专属色卡
-  - ✅ 双层准确性双保险：生图前自检 + 生图后视觉复核
-  - 📚 内置物理/数学/化学/生物等学科的插图指引
-  - 🔄 支持批量生成，每章不同色系
-- **基础模式**：无需外部生图 API Key；本地渲染需要 Node.js、npx 和首次下载依赖的网络条件
-- **高级选项**：支持 MuleRun / APImart / Atlas Cloud 外部生图 API
+| Skill | 你会得到 | 适合解决 |
+|---|---|---|
+| [`nachuan-tujie`](nachuan-tujie/SKILL.md) | 1080×1920 竖版 PNG 知识图 | 概念对比、公式、步骤、时间线、思维导图 |
+| [`nachuan-teachingvideo`](nachuan-teachingvideo/SKILL.md) | 1080p 教学视频或无声循环 MP4 | 物理过程、实验、公式推导、概念辨析 |
 
-**触发词**：做一张信息图、知识卡片、学科图解、纳川图解
+覆盖语文、数学、英语、物理、化学、生物、政治、历史、地理和高中预科。它们是 TRAE 学习工作台里的长期增强能力，不替代孩子思考，也不替代教材和教师。
 
-[查看详情 → `nachuan-tujie/SKILL.md`](nachuan-tujie/SKILL.md)
+## 3 分钟，在 TRAE CN 里跑通第一次
 
----
+### 第 1 步：安装两个 Skill
 
-### 2. nachuan-teachingvideo（纳川教学视频）
-
-**动态教学视频生成工具**
-
-- **功能**：将学科概念自动做成动态教学内容
-- **两种产出**（共用同一 HTML，双模式切换）：
-  - 🎬 **配音教学视频**：1080p、60-90s、中文旁白 + 字幕
-  - 🔄 **无声循环动图**：1080p、~32s、无声循环
-- **学科覆盖**：物理（声/光/力/电/热）、数学、生物、化学、语文、英语
-- **核心特性**：
-  - 🎨 7 套主题配色，同学科同色系统一
-  - 🎙️ 默认 macOS 内置配音（零配置），可选 Minimax TTS 升级
-  - 🎬 HyperFrames 本地渲染，不消耗 token
-  - 📐 SVG 矢量示意图，精确可控可动画
-  - 📖 融合 OpenMontage 教学叙事方法论
-- **基础模式**：无需外部配音 API Key；需要 Node.js、ffmpeg 和本地 HyperFrames 渲染环境
-
-**触发词**：教学视频、配音视频、教学动图、无声动图、循环视频、纳川教学
-
-[查看详情 → `nachuan-teachingvideo/SKILL.md`](nachuan-teachingvideo/SKILL.md)
-
----
-
-## 设计理念
-
-### 来自《准高中生AI橙皮书》
-
-- **准确性优先**：每张图/视频必须走完知识自检 + 视觉复核两道关
-- **S.T.P. 方法**：场景（Scenario）→ 工具（Tool）→ 练习（Practice）
-- **亲子共读**：家长和孩子一起学，一起操作
-- **碎片学习**：60-90 秒短视频，碎片时间高效吸收
-
-### 来自 OpenMontage（方法论融合）
-
-- **Mayer 多媒体学习原则**
-- **讲解型弧线模板**：钩子 → 张力 → 概念 → 核心洞察 → 证明 → 启示 → 收尾
-- **误解优先法**：先呈现常见误解再反驳，学习效果更好
-- **引导式发现法**：重建推理路径，让学生感觉是自己发现的
-- **动效设计四原则**：缓入缓出 / 预备动作 / 超出回弹 / 分层错峰
-
----
-
-## 安装使用
-
-### 快速安装
+在 TRAE CN 的终端中复制：
 
 ```bash
-# 安装到 TRAE CN 的全局 skills 目录
-npx -y skills add wilsondd-lab/nachuan-stu --skill nachuan-tujie --agent trae-cn --global --yes --copy
-npx -y skills add wilsondd-lab/nachuan-stu --skill nachuan-teachingvideo --agent trae-cn --global --yes --copy
+npx -y skills add wilsondd-lab/nachuan-stu --skill '*' --agent trae-cn --global --yes --copy
+```
 
-# 验证两个 Skill 是否已经出现
+Node.js 是本地运行环境，安装一次即可。若终端提示找不到 `node` 或 `npx`，先到 [Node.js 官网](https://nodejs.org/)安装 LTS 版本，再重新执行上面的命令。
+
+### 第 2 步：验证安装
+
+```bash
 npx -y skills list --global --agent trae-cn
+```
 
-# 或直接克隆
+列表里应能看到：
+
+- `nachuan-tujie`
+- `nachuan-teachingvideo`
+
+### 第 3 步：在 TRAE 里直接说
+
+```text
+用纳川图解，做一张“速度 vs 加速度”的初二物理知识图。
+```
+
+或者：
+
+```text
+用纳川教学视频，做一个“声现象”的 60 秒教学视频。
+```
+
+第一次调用时，Skill 会检查本机环境。图解基础模式需要 Node.js、npx 和本地渲染组件；教学视频还需要 ffmpeg。首次下载渲染依赖时需要可用网络。
+
+## 生成只是中间步骤
+
+```text
+孩子先说自己的理解
+    ↓
+让 AI 整理图解提纲或视频脚本
+    ↓
+家长和孩子一起审内容
+    ↓
+生成图解或视频
+    ↓
+孩子看着成果复述
+    ↓
+做一道相似题并回教材核对
+```
+
+AI 生成不是终点。能复述、能练习、能核对，才算完成一次学习。
+
+## 环境与兼容性
+
+<details>
+<summary><strong>展开环境检测命令</strong></summary>
+
+### 图解环境
+
+```bash
+node --version
+npx --version
+npx hyperframes --version
+```
+
+### 教学视频环境
+
+```bash
+python3 nachuan-teachingvideo/scripts/render_video.py --check-env
+```
+
+2026-07-15 的本机实测环境为 Node.js `v22.22.3`、npx `10.9.8`、HyperFrames `0.7.58`、ffmpeg `8.1`。这只是一次实测记录，不是对所有电脑和未来版本的保证。
+
+</details>
+
+<details>
+<summary><strong>只装一个 Skill、克隆仓库或移除</strong></summary>
+
+### 只安装图解
+
+```bash
+npx -y skills add wilsondd-lab/nachuan-stu --skill nachuan-tujie --agent trae-cn --global --yes --copy
+```
+
+### 只安装教学视频
+
+```bash
+npx -y skills add wilsondd-lab/nachuan-stu --skill nachuan-teachingvideo --agent trae-cn --global --yes --copy
+```
+
+### 直接克隆仓库
+
+```bash
 git clone https://github.com/wilsondd-lab/nachuan-stu.git
 ```
 
-基础功能不要求外部 API Key，但本地仍需具备各 Skill 在首次检查中列出的 Node.js、npx、ffmpeg 或渲染组件。首次安装和下载依赖时需要可用网络。
+### 更新与移除
 
-### 生图与配音升级（可选）
+重新执行安装命令即可拉取当前仓库版本。需要移除时，先用 `skills list` 确认安装位置，再删除对应的全局 Skill；不同版本的 Skills CLI 参数可能变化，以命令行帮助为准。
 
-如需更高质量的生图或配音，可配置以下环境变量：
+</details>
 
-```bash
-# 生图 API（三选一）
-export MULERUN_API_KEY=sk-xxx      # MuleRun Nano Banana 2
-export APIMART_API_KEY=sk-xxx       # APImart GPT Image 2
-export ATLASCLOUD_API_KEY=sk-xxx  # Atlas Cloud GPT Image 2
+<details>
+<summary><strong>仓库目录</strong></summary>
 
-# 配音 API（可选）
-export MINIMAX_API_KEY=sk-xxx       # Minimax TTS 高清配音
+```text
+nachuan-stu/
+├── nachuan-tujie/             # 知识图解 Skill
+├── nachuan-teachingvideo/     # 教学视频 Skill
+├── assets/readme/             # GitHub 首图
+├── assets/showcase/           # 真实产物预览
+└── update_scripts/            # 上游同步脚本
 ```
 
----
+</details>
 
-## 自动更新
+## 与《准高中生 AI 橙皮书》的关系
 
-本仓库配置了自动同步上游更新机制，每 5 天从 linyuebanzi-skills 上游拉取最新更新，按纳川规范自动改造后更新。
+《准高中生 AI 橙皮书》以 TRAE CN 为 21 次亲子练习的主要工作台。纳川图解和纳川教学视频安装一次后，可以在不同学科反复调用，把一次对话继续变成能保存、复述和回看的学习资料。
 
-自动更新流程：
-1. 拉取上游最新代码
-2. 对比差异识别变更
-3. 应用纳川改造规则（名字替换、基础模式配置、OpenMontage 融合、橙皮书定位）
-4. 提交并推送更新
+本仓库公开提供两个 Skill。手册的购买价值不来自软件独占，而来自已经排好顺序的练习、家长参与方式、安装与验收、错题/作文/口语积累方法和持续更新说明。
 
-手动触发更新：
-```bash
-python3 update_scripts/sync_upstream.py
-```
+## 来源与使用边界
 
----
-
-## 与上游区别
-
-| 维度 | 上游 linyuebanzi-skills | 纳川 nachuan-stu |
-|------|----------------------|-------------------|
-| 目标用户 | 通用 | 准高中生 + 家长 |
-| 生图配置 | 需要 API Key | 基础模式无需外部生图 API Key，仍需本地渲染环境 |
-| 配音配置 | 需要 Minimax API Key | 基础模式可用系统配音，仍需本地视频渲染环境 |
-| 教学方法论 | 基础分镜模板 | + OpenMontage 叙事 + 橙皮书理念 |
-| Skill 结构 | 分离（业务层/执行层分离） | 合并（一站式） |
-| 名字品牌 | 林月半子 | 纳川 |
-
----
-
-## 许可证
-
-基于上游开源项目改造，遵循上游许可证。
+本项目基于 [linyuebanzi-skills](https://github.com/lqshow/linyuebanzi-skills) 改造，并融合 OpenMontage 教学叙事方法与《准高中生 AI 橙皮书》的 S.T.P. 方法。使用和再分发前，请同时核对本仓库与上游项目当期的授权说明。
