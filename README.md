@@ -137,7 +137,7 @@ nachuan-stu/
 ├── nachuan-teachingvideo/     # 教学视频 Skill
 ├── assets/readme/             # GitHub 首图
 ├── assets/showcase/           # 真实产物预览
-└── update_scripts/            # 上游同步脚本
+└── update_scripts/            # 维护工具脚本
 ```
 
 </details>
@@ -146,8 +146,3 @@ nachuan-stu/
 
 《准高中生 AI 橙皮书》以 TRAE CN 为 21 次亲子练习的主要工作台。纳川图解和纳川教学视频安装一次后，可以在不同学科反复调用，把一次对话继续变成能保存、复述和回看的学习资料。
 
-本仓库公开提供两个 Skill。手册的购买价值不来自软件独占，而来自已经排好顺序的练习、家长参与方式、安装与验收、错题/作文/口语积累方法和持续更新说明。
-
-## 来源与使用边界
-
-本项目基于 [linyuebanzi-skills](https://github.com/lqshow/linyuebanzi-skills) 改造，并融合 OpenMontage 教学叙事方法与《准高中生 AI 橙皮书》的 S.T.P. 方法。使用和再分发前，请同时核对本仓库与上游项目当期的授权说明。

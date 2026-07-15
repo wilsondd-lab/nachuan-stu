@@ -80,8 +80,8 @@
 
 ## 五维分镜描述（阶段 3 必做）
 
-> 来源：OpenMontage Scene Director 5-Aspect Scene-Plan Checklist
-> 融合 Subject / Subject Motion / Scene / Spatial Framing / Camera 五维框架。
+> 来源：纳川教学视频五维分镜框架
+> 
 
 写脚本时的 `visual` 字段是"大概描述"，到了阶段 3 分镜设计，必须把每个场景拆成**五维**。
 **这不是"有时间再细化"——是每个场景都必须明确的硬要求。**
