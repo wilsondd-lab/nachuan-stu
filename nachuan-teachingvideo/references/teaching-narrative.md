@@ -2,7 +2,7 @@
 
 > 纳川教学视频的内容设计基于认知科学和教育心理学的研究成果。
 > 来源：Mayer "Multimedia Learning" (Cambridge UP, 2001/2020)、Derek Muller 博士论文 (U. Sydney 2008)、
-> 3Blue1Brown (Grant Sanderson)、Kurzgesagt 制作方法论、OpenMontage 讲解型管线
+> 3Blue1Brown (Grant Sanderson)、Kurzgesagt 制作方法论
 
 ---
 

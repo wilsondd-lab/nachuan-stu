@@ -1,9 +1,8 @@
 # 动效设计原则
 
 > 纳川教学视频的动效不只是好看，更是为了辅助理解。
-> 来源：Disney 12 动画原则 (Frank Thomas & Ollie Johnston)、School of Motion 课程、
-> Motion Design School、HyperFrames 文档、The Animator's Survival Kit (Richard Williams)、
-> OpenMontage 动效编排方法论
+> 来源：Disney 12 动画原则 (Frank Thomas & Ollie Johnston)、School of Motion 课程
+> Motion Design School、HyperFrames 文档、The Animator's Survival Kit (Richard Williams)
 
 ---
 
