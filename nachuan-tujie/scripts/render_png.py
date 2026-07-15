@@ -10,7 +10,7 @@
     --width WIDTH     输出宽度（默认：1080）
     --height HEIGHT   输出高度（默认：1920）
     --wait MS         等待页面加载时间（毫秒，默认：500）
-    --engine ENGINE   渲染引擎：auto/hyperframes/puppeteer（默认：auto）
+    --engine ENGINE   渲染引擎：auto/chrome/hyperframes/pyppeteer（默认：auto）
 
 示例：
     python3 render_png.py input.html output.png
@@ -150,6 +150,65 @@ def check_pyppeteer():
         print_info("pyppeteer 已安装")
         return True
     except ImportError:
+        return False
+
+
+def find_chrome():
+    """查找本机 Chrome/Chromium 可执行文件。"""
+    candidates = []
+    system = platform.system()
+
+    if system == 'Darwin':
+        candidates.extend([
+            '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+            '/Applications/Chromium.app/Contents/MacOS/Chromium',
+        ])
+    elif system == 'Windows':
+        for base in (os.environ.get('PROGRAMFILES'), os.environ.get('PROGRAMFILES(X86)'), os.environ.get('LOCALAPPDATA')):
+            if base:
+                candidates.extend([
+                    os.path.join(base, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+                    os.path.join(base, 'Chromium', 'Application', 'chrome.exe'),
+                ])
+
+    candidates.extend(filter(None, [
+        shutil.which('google-chrome'),
+        shutil.which('google-chrome-stable'),
+        shutil.which('chromium'),
+        shutil.which('chromium-browser'),
+    ]))
+
+    return next((path for path in candidates if os.path.isfile(path)), None)
+
+
+def render_with_chrome(html_path, output_path, width=1080, height=1920, wait_ms=500):
+    """使用本机 Chrome/Chromium 无头模式渲染。"""
+    chrome_path = find_chrome()
+    if not chrome_path:
+        return False
+
+    print_step("使用本机 Chrome 渲染...")
+    cmd = [
+        chrome_path,
+        '--headless=new',
+        '--disable-gpu',
+        '--hide-scrollbars',
+        f'--window-size={width},{height}',
+        f'--virtual-time-budget={max(wait_ms, 100)}',
+        f'--screenshot={output_path}',
+        Path(html_path).resolve().as_uri(),
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        if result.returncode == 0 and os.path.exists(output_path):
+            file_size = os.path.getsize(output_path)
+            print_success(f"渲染成功！输出文件：{output_path}（{file_size / 1024:.1f} KB）")
+            return True
+        print_warning(f"本机 Chrome 渲染失败：{result.stderr.strip()[:300]}")
+        return False
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        print_warning(f"本机 Chrome 渲染异常：{exc}")
         return False
 
 
@@ -329,7 +388,7 @@ def main():
     parser.add_argument('--width', type=int, default=1080, help='输出宽度（默认：1080）')
     parser.add_argument('--height', type=int, default=1920, help='输出高度（默认：1920）')
     parser.add_argument('--wait', type=int, default=500, help='等待页面加载毫秒数（默认：500）')
-    parser.add_argument('--engine', default='auto', choices=['auto', 'hyperframes', 'pyppeteer'],
+    parser.add_argument('--engine', default='auto', choices=['auto', 'chrome', 'hyperframes', 'pyppeteer'],
                         help='渲染引擎（默认：auto，自动选择）')
 
     args = parser.parse_args()
@@ -362,7 +421,19 @@ def main():
     print_info(f"输出尺寸：{args.width} × {args.height}")
 
     # 根据引擎选择渲染方式
-    if args.engine == 'hyperframes':
+    if args.engine == 'chrome':
+        if not find_chrome():
+            print_error("未找到本机 Chrome 或 Chromium")
+            sys.exit(1)
+        success = render_with_chrome(
+            html_path, output_path,
+            width=args.width, height=args.height, wait_ms=args.wait
+        )
+        if not success:
+            print_error("本机 Chrome 渲染失败")
+            sys.exit(1)
+
+    elif args.engine == 'hyperframes':
         # 强制使用 HyperFrames
         print_step("检测环境...")
         if not check_node():
@@ -394,8 +465,19 @@ def main():
             sys.exit(1)
 
     else:
-        # 自动选择：优先 HyperFrames，fallback 到 pyppeteer
+        # 自动选择：优先本机 Chrome，避免额外下载 Chromium；再尝试其他引擎
         print_step("检测渲染环境...")
+
+        chrome_path = find_chrome()
+        if chrome_path:
+            print_info(f"检测到本机浏览器：{chrome_path}")
+            success = render_with_chrome(
+                html_path, output_path,
+                width=args.width, height=args.height, wait_ms=args.wait
+            )
+            if success:
+                sys.exit(0)
+            print_warning("本机 Chrome 渲染失败，尝试其他引擎...")
 
         node_ok = check_node()
         if not node_ok:
